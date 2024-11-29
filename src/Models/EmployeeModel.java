@@ -1,6 +1,6 @@
 package Models;
 import java.sql.*;
-
+import utilities.*;
 public class EmployeeModel {
     private final Connection conn = DBConnection.getInstance().getConnection();
 

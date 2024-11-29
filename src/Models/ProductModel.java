@@ -2,7 +2,7 @@ package Models;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import utilities.*;
 public class ProductModel {
     private final Connection conn = DBConnection.getInstance().getConnection();
 
@@ -76,7 +76,7 @@ public class ProductModel {
     }
 
     public List<Product> searchProduct(String productName) {
-        List<Product> productList = new ArrayList<>().reversed();
+        List<Product> productList = new ArrayList<>();
         String query = "SELECT * FROM product WHERE name LIKE ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, "%" + productName + "%");

@@ -1,5 +1,6 @@
 package Models;
 import java.sql.*;
+import utilities.*;
 
 public class ReportModel {
 
@@ -30,8 +31,8 @@ public class ReportModel {
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, report.getBranchCode());
             stmt.setString(2, report.getRangeTag());
-            stmt.setDate(3, report.getStartDate());
-            stmt.setDate(4, report.getEndDate());
+            stmt.setString(3, report.getStartDate().toString());
+            stmt.setString(4, report.getEndDate().toString());
             stmt.setDouble(5, report.getSales());
             stmt.setInt(6, report.getRemainingStock());
             stmt.setDouble(7, report.getProfit());
@@ -59,8 +60,8 @@ public class ReportModel {
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, report.getBranchCode());
             stmt.setString(2, report.getRangeTag());
-            stmt.setDate(3, report.getStartDate());
-            stmt.setDate(4, report.getEndDate());
+            stmt.setString(3, report.getStartDate().toString());
+            stmt.setString(4, report.getEndDate().toString());
             stmt.setDouble(5, report.getSales());
             stmt.setInt(6, report.getRemainingStock());
             stmt.setDouble(7, report.getProfit());
@@ -82,8 +83,8 @@ public class ReportModel {
                         rs.getInt("reportid"),
                         rs.getString("branchCode"),
                         rs.getString("rangeTag"),
-                        rs.getDate("startDate"),
-                        rs.getDate("endDate"),
+                        rs.getDate("startDate").toLocalDate(),
+                        rs.getDate("endDate").toLocalDate(),
                         rs.getDouble("sales"),
                         rs.getInt("remainingStock"),
                         rs.getDouble("profit")
@@ -94,4 +95,4 @@ public class ReportModel {
         }
         return null;
     }
-}
+} 

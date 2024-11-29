@@ -1,5 +1,6 @@
 package Models;
 import java.sql.*;
+import utilities.*;
 
 public class ProductBranchModel {
     private final Connection conn = DBConnection.getInstance().getConnection();
