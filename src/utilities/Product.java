@@ -26,6 +26,7 @@ public class Product {
         this.salePrice = salePrice;
         this.priceByUnit = priceByUnit;
         this.priceByCarton = priceByCarton;
+        this.vendorId = vendorId;
     }
 
     public String getName() {
