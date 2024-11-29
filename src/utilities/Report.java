@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utilities;
 
 import java.time.LocalDate;
 
-/**
- *
- * @author laiba
- */
 public class Report {
     private int reportId;
     private String branchCode;
@@ -30,6 +21,14 @@ public class Report {
         this.sales = sales;
         this.remainingStock = remainingStock;
         this.profit = profit;
+    }
+
+    public int getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(int reportId) {
+        this.reportId = reportId;
     }
 
     public String getBranchCode() {
@@ -87,14 +86,4 @@ public class Report {
     public void setProfit(double profit) {
         this.profit = profit;
     }
-
-    public int getReportId() {
-        return reportId;
-    }
-
-    public void setReportId(int reportId) {
-        this.reportId = reportId;
-    }
-    
-    
 }

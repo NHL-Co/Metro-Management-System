@@ -56,11 +56,11 @@ public class Branch {
         this.phone = phone;
     }
 
-    public int getnEmployees() {
+    public int getNEmployees() {
         return nEmployees;
     }
 
-    public void setnEmployees(int nEmployees) {
+    public void setNEmployees(int nEmployees) {
         this.nEmployees = nEmployees;
     }
     

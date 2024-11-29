@@ -10,11 +10,13 @@ package utilities;
  * @author laiba
  */
 public class Vendor {
+    int vendorId;
     String name;
     String cnic;
     String phoneNumber;
 
-    public Vendor(String name, String cnic, String phoneNumber) {
+    public Vendor(int vendorId, String name, String cnic, String phoneNumber) {
+        this.vendorId = vendorId;
         this.name = name;
         this.cnic = cnic;
         this.phoneNumber = phoneNumber;
@@ -43,6 +45,14 @@ public class Vendor {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    
-    
+
+    public int getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(int vendorId) {
+        this.vendorId = vendorId;
+    }
+
+
 }
