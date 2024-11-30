@@ -20,4 +20,18 @@ public class SuperAdmin {
             System.out.println("Error seeding super admin: " + e.getMessage());
         }
     }
+
+    public boolean adminLogin(String usernameInput, String pwdInput)
+    {
+        String query = "SELECT * FROM super_admin WHERE username = ? AND password = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, usernameInput);
+            pstmt.setString(2, pwdInput);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
