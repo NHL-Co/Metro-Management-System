@@ -10,15 +10,10 @@ package utilities;
  * @author laiba
  */
 public class GlobalValues {
-    private float tax;
+    private static float tax = 0.5f;
 
-    public float getTax() {
+    public static float getTax() {
         return tax;
     }
 
-    public void setTax(float tax) {
-        this.tax = tax;
-    }
-    
-    
 }
