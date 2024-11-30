@@ -20,13 +20,13 @@ public class VendorModel {
         }
     }
 
-    public void addVendor(Vendor vendor) {
+    public boolean addVendor(Vendor vendor) {
         String query = "INSERT INTO vendor (name, cnic, phone_number) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, vendor.getName());
             pstmt.setString(2, vendor.getCnic());
             pstmt.setString(3, vendor.getPhoneNumber());
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
