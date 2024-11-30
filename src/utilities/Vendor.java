@@ -10,10 +10,10 @@ package utilities;
  * @author laiba
  */
 public class Vendor {
-    int vendorId;
-    String name;
-    String cnic;
-    String phoneNumber;
+    private int vendorId;
+    private String name;
+    private String cnic;
+    private String phoneNumber;
 
     public Vendor(int vendorId, String name, String cnic, String phoneNumber) {
         this.vendorId = vendorId;
