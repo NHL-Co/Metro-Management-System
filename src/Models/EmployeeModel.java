@@ -81,5 +81,25 @@ public class EmployeeModel {
         }
         return false;
     }
+
+    public Employee employeeLogin(String emailInput, String pwdInput)
+    {
+        String query = "SELECT * FROM employees WHERE email = ? AND password = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, emailInput);
+            pstmt.setString(2, pwdInput);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next())
+            {
+                Employee employee = new Employee(rs.getInt("emp_no"), rs.getString("name"), rs.getString("email"), 
+                        rs.getString("password"), rs.getString("branch_code"), rs.getDouble("salary"), 
+                        rs.getString("emp_type"));
+                return employee;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
 
