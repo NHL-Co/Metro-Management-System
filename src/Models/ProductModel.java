@@ -98,5 +98,24 @@ public class ProductModel {
         }
         return productList;
     }
+
+     public Product getProduct(int id)
+    {
+        String query = "SELECT * FROM product WHERE product_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next())
+            {
+                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"), 
+                        rs.getString("name"),rs.getString("category"), rs.getDouble("original_price"), 
+                        rs.getDouble("sale_price"), rs.getDouble("price_by_unit"), rs.getDouble("price_by_carton"));
+                return product;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
 
