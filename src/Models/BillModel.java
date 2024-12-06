@@ -18,7 +18,8 @@ public class BillModel {
                 "cash TINYINT(1), " +
                 "total_amount DOUBLE, " +
                 "tax DOUBLE, " +
-                "net_amount DOUBLE)";
+                "net_amount DOUBLE"
+                + "FOREIGN KEY (branch_code) REFERENCES branch(branch_code) ON DELETE SET NULL ON UPDATE CASCADE)";
 
         String billProductTableQuery = "CREATE TABLE IF NOT EXISTS bill_product (" +
                 "bill_id INT, " +
@@ -40,7 +41,7 @@ public class BillModel {
      * Adds a new bill and its corresponding products to the database.
      */
     public boolean addBill(Bill bill) {
-        String billQuery = "INSERT INTO bill (bill_product, date, cash, total_amount, tax, net_amount) VALUES (?, ?, ?, ?, ?, ?)";
+        String billQuery = "INSERT INTO bill (branch_code, date, cash, total_amount, tax, net_amount) VALUES (?, ?, ?, ?, ?, ?)";
         String billProductQuery = "INSERT INTO bill_product (bill_id, product_id, quantity) VALUES (?, ?, ?)";
         try {
             // Disable auto-commit for transaction management
