@@ -18,7 +18,7 @@ public class BillModel {
                 "cash TINYINT(1), " +
                 "total_amount DOUBLE, " +
                 "tax DOUBLE, " +
-                "net_amount DOUBLE"
+                "net_amount DOUBLE,"
                 + "FOREIGN KEY (branch_code) REFERENCES branch(branch_code) ON DELETE SET NULL ON UPDATE CASCADE)";
 
         String billProductTableQuery = "CREATE TABLE IF NOT EXISTS bill_product (" +
