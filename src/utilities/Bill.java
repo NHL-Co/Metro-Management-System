@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class Bill {
     private int billId;
+    private String branchCode;
     private LocalDate date;
     private Map<Product, Integer> products_qty;
     private boolean cash;
@@ -21,8 +22,9 @@ public class Bill {
     private double tax;
     private double netAmount;
 
-    public Bill(int billId, LocalDate date, Map<Product, Integer> products_qty, boolean cash, double totalAmount, double tax, double netAmount) {
+    public Bill(int billId, String branchCode, LocalDate date, Map<Product, Integer> products_qty, boolean cash, double totalAmount, double tax, double netAmount) {
         this.billId = billId;
+        this.branchCode = branchCode;
         this.date = date;
         this.products_qty = products_qty;
         this.cash = cash;
@@ -85,6 +87,14 @@ public class Bill {
 
     public void setNetAmount(double netAmount) {
         this.netAmount = netAmount;
+    }
+
+    public String getBranchCode() {
+        return branchCode;
+    }
+
+    public void setBranchCode(String branchCode) {
+        this.branchCode = branchCode;
     }
     
     
