@@ -13,6 +13,7 @@ public class BillModel {
     public boolean createTable() {
         String billTableQuery = "CREATE TABLE IF NOT EXISTS bill (" +
                 "bill_id INT PRIMARY KEY AUTO_INCREMENT, " +
+                "branch_code VARCHAR(6)" +
                 "date DATE, " +
                 "cash TINYINT(1), " +
                 "total_amount DOUBLE, " +
@@ -39,7 +40,7 @@ public class BillModel {
      * Adds a new bill and its corresponding products to the database.
      */
     public boolean addBill(Bill bill) {
-        String billQuery = "INSERT INTO bill (date, cash, total_amount, tax, net_amount) VALUES (?, ?, ?, ?, ?)";
+        String billQuery = "INSERT INTO bill (bill_product, date, cash, total_amount, tax, net_amount) VALUES (?, ?, ?, ?, ?, ?)";
         String billProductQuery = "INSERT INTO bill_product (bill_id, product_id, quantity) VALUES (?, ?, ?)";
         try {
             // Disable auto-commit for transaction management
@@ -48,11 +49,12 @@ public class BillModel {
             // Insert into bill table
             int generatedBillId;
             try (PreparedStatement billStmt = conn.prepareStatement(billQuery, Statement.RETURN_GENERATED_KEYS)) {
-                billStmt.setString(1, bill.getDate().toString());
-                billStmt.setBoolean(2, bill.isCash());
-                billStmt.setDouble(3, bill.getTotalAmount());
-                billStmt.setDouble(4, bill.getTax());
-                billStmt.setDouble(5, bill.getNetAmount());
+                billStmt.setString(1, bill.getBranchCode());
+                billStmt.setString(2, bill.getDate().toString());
+                billStmt.setBoolean(3, bill.isCash());
+                billStmt.setDouble(4, bill.getTotalAmount());
+                billStmt.setDouble(5, bill.getTax());
+                billStmt.setDouble(6, bill.getNetAmount());
                 billStmt.executeUpdate();
 
                 // Retrieve the generated bill ID
