@@ -30,7 +30,10 @@ public class VendorModel {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
+
+
 
     public void deleteVendor(int vendorId) {
         String query = "DELETE FROM vendor WHERE vendor_id = ?";
@@ -75,4 +78,34 @@ public class VendorModel {
         return vendorList;
     }
 
+    // New Method: Fetch Vendor Names
+    public String[] getVendorNames() {
+        List<String> vendorNames = new ArrayList<>();
+        String query = "SELECT name FROM vendor";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                vendorNames.add(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vendorNames.toArray(new String[0]);
+    }
+
+    public int getVendorIdByName(String vendorName) {
+        String query = "SELECT vendor_id FROM vendor WHERE name = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, vendorName);  // Use the vendor name to fetch vendor_id
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("vendor_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;  // Return -1 if vendor not found
+    }
 }
+
+

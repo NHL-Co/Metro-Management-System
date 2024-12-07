@@ -1,8 +1,10 @@
 package Models;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import utilities.*;
+
 public class ProductModel {
     private final Connection conn = DBConnection.getInstance().getConnection();
 
@@ -17,6 +19,7 @@ public class ProductModel {
                 "price_by_unit DOUBLE, " +
                 "price_by_carton DOUBLE, " +
                 "FOREIGN KEY (vendor_id) REFERENCES vendor(vendor_id) ON DELETE SET NULL)";
+
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(query);
             return true;
@@ -26,10 +29,21 @@ public class ProductModel {
         }
     }
 
-    public boolean addProduct(Product product) {
+    public boolean addProduct(Product product, String vendorName) {
+        // Create an instance of VendorModel to access the getVendorIdByName method
+        VendorModel vendorModel = new VendorModel();
+        int vendorId = vendorModel.getVendorIdByName(vendorName);  // Get vendor_id based on vendor name
+
+        // If vendor ID is not found, return false
+        if (vendorId == -1) {
+            System.out.println("Vendor not found!");
+            return false;
+        }
+
+        // Proceed with adding the product using the valid vendor_id
         String query = "INSERT INTO product (vendor_id, name, category, original_price, sale_price, price_by_unit, price_by_carton) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, product.getVendorId());
+            pstmt.setInt(1, vendorId);  // Set the valid vendor_id
             pstmt.setString(2, product.getName());
             pstmt.setString(3, product.getCategory());
             pstmt.setDouble(4, product.getOriginalPrice());
@@ -99,16 +113,14 @@ public class ProductModel {
         return productList;
     }
 
-     public Product getProduct(int id)
-    {
+    public Product getProduct(int id) {
         String query = "SELECT * FROM product WHERE product_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next())
-            {
-                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"), 
-                        rs.getString("name"),rs.getString("category"), rs.getDouble("original_price"), 
+            if (rs.next()) {
+                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"),
+                        rs.getString("name"), rs.getString("category"), rs.getDouble("original_price"),
                         rs.getDouble("sale_price"), rs.getDouble("price_by_unit"), rs.getDouble("price_by_carton"));
                 return product;
             }
@@ -118,4 +130,3 @@ public class ProductModel {
         return null;
     }
 }
-
