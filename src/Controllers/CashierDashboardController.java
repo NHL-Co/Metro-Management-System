@@ -8,18 +8,18 @@ package Controllers;
 import Models.BillModel;
 import Models.EmployeeModel;
 import Models.ProductModel;
+import Views.CashierDashboardView;
 import utilities.Employee;
-import utilities.MessageDialog;
-import utilities.Product;
 
 /**
  *
  * @author laiba
  */
 public class CashierDashboardController {
+    
+    private CashierDashboardView view;
     private Employee cashier;
     private EmployeeModel empModel;
-    // cashier view
     private ProductModel prodModel;
     private BillModel billModel;
 
@@ -28,33 +28,28 @@ public class CashierDashboardController {
         this.empModel = empModel;
         this.prodModel = new ProductModel();
         this.billModel = new BillModel();
+        view = new CashierDashboardView();
+        view.setGenBillButtonListener(e -> generateBill());
+        view.setChangePwdButtonListener(e -> changePwd());
+        
         if(cashier.getPassword().equals("123456"))
         {
-            // show changePwd form
+           new ChangePasswordController(view, cashier, empModel, true);
+            view.setVisible(false);
         }
     }
     
     public void changePwd()
     {
-        String oldPwd = "", newPwd = "";
-        if(oldPwd.equals(cashier.getPassword()))
-        {
-            cashier.setPassword(newPwd);
-            if(empModel.updateEmployee(cashier))
-            {
-                MessageDialog.showSuccess("Password changed successfully!");
-            }
-            else
-            {
-                MessageDialog.showFail("Could not change password!");
-            }
-        }
+        new ChangePasswordController(view, cashier, empModel, false);
+        view.setVisible(false);
     }
     
     
     public void generateBill()
     {
-        // call createBill model
+            new GenerateBillController(prodModel, billModel, cashier);
+            view.setVisible(false);
     }
     
     
