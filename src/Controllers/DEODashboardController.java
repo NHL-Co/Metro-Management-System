@@ -1,90 +1,132 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controllers;
 
-import Models.BillModel;
 import Models.EmployeeModel;
 import Models.ProductModel;
 import Models.VendorModel;
+import Views.DEODashboardView;
 import utilities.Employee;
 import utilities.InputValidation;
 import utilities.MessageDialog;
 import utilities.Product;
 import utilities.Vendor;
 
-/**
- *
- * @author laiba
- */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class DEODashboardController {
     private VendorModel vendorModel;
     private ProductModel prodModel;
     private EmployeeModel empModel;
     private Employee deo;
-    // deo dashboard view, add vendor view, add product view
-    
+    private DEODashboardView view;
+
     public DEODashboardController(Employee deo, EmployeeModel empModel) {
         this.deo = deo;
         this.empModel = empModel;
         this.prodModel = new ProductModel();
         this.vendorModel = new VendorModel();
-        if(deo.getPassword().equals("123456"))
-        {
-            // show changePwd form
+        this.view = new DEODashboardView();
+
+        initializeListeners();
+        populateVendorComboBox();
+    }
+
+    private void initializeListeners() {
+        // Navigation button listeners to switch panels
+        view.getVendorButton().addActionListener(e -> {
+            view.showPanel("VendorPanel");
+        });
+
+        view.getProductButton().addActionListener(e -> {
+            view.showPanel("ProductPanel");
+        });
+
+        // Add vendor button listener
+        view.getAddVendorButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addVendor();
+            }
+        });
+
+        // Save product button listener
+        view.getSaveProductButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addProduct();
+            }
+        });
+    }
+
+    private void showVendorPanel() {
+        CardLayout cl = (CardLayout) view.getContentPanel().getLayout();
+        cl.show(view.getContentPanel(), "VendorPanel");
+    }
+
+    private void showProductPanel() {
+        CardLayout cl = (CardLayout) view.getContentPanel().getLayout();
+        cl.show(view.getContentPanel(), "ProductPanel");
+    }
+
+    private void populateVendorComboBox() {
+        // Fetch vendor names from the model and populate the combo box
+        String[] vendorNames = vendorModel.getVendorNames();
+        JComboBox<String> vendorComboBox = view.getVendorComboBox();
+        for (String vendorName : vendorNames) {
+            vendorComboBox.addItem(vendorName);
         }
     }
-    
-    public void changePwd()
-    {
-        String oldPwd = "", newPwd = "";
-        if(oldPwd.equals(deo.getPassword()))
-        {
-            deo.setPassword(newPwd);
-            if(empModel.updateEmployee(deo))
-            {
-                MessageDialog.showSuccess("Password changed successfully!");
-            }
-            else
-            {
-                MessageDialog.showFail("Could not change password!");
-            }
-        }
-    }
-    
-    public void addVendor()
-    {
-        String name = "", cnic = "", phoneNumber = "";
-        
-        if(InputValidation.validateCNIC(cnic) && InputValidation.validatePhone(phoneNumber))
-        {
+
+    public void addVendor() {
+        String name = view.getVendorNameField().getText();
+        String cnic = view.getVendorCnicField().getText();
+        String phoneNumber = view.getVendorPhoneField().getText();
+
+        if (InputValidation.validateCNIC(cnic) && InputValidation.validatePhone(phoneNumber)) {
             Vendor vendor = new Vendor(0, name, cnic, phoneNumber);
-            if(vendorModel.addVendor(vendor))
-            {
+            if (vendorModel.addVendor(vendor)) {
                 MessageDialog.showSuccess("Vendor added successfully!");
-            }
-            else
-            {
+                view.getVendorComboBox().addItem(name); // Update vendor combo box
+            } else {
                 MessageDialog.showFail("Could not add vendor!");
             }
+        } else {
+            MessageDialog.showFail("Invalid CNIC or phone number!");
         }
     }
-    
-    public void addProduct()
-    {
-        int vendorId = 0;
-        String name = "", category = "";
-        double originalPrice = 0, salePrice = 0, priceByUnit = 0, priceByCart = 0;
-        Product product = new Product(0, vendorId, name, category, originalPrice, salePrice, priceByUnit, priceByCart);
-        if(prodModel.addProduct(product))
-        {
-            MessageDialog.showSuccess("Product added successfully!");
+
+    public void addProduct() {
+        try {
+            String productName = view.getProductNameField().getText();
+            String productCategory = view.getProductCategoryField();
+            Product product = getProduct(productName, productCategory);
+
+            String selectedVendorName = (String) view.getVendorComboBox().getSelectedItem(); // Get selected vendor name from the combo box
+
+            if (prodModel.addProduct(product, selectedVendorName)) { // Pass the selected vendor name
+                MessageDialog.showSuccess("Product added successfully!");
+            } else {
+                MessageDialog.showFail("Could not add product!");
+            }
+        } catch (NumberFormatException ex) {
+            MessageDialog.showFail("Please enter valid numerical values for prices!");
         }
-        else
-        {
-            MessageDialog.showFail("Could not add product!");
-        }
+    }
+
+    private Product getProduct(String productName, String productCategory) {
+        double originalPrice = Double.parseDouble(view.getProductOriginalPriceField().getText());
+        double salePrice = Double.parseDouble(view.getProductSalePriceField().getText());
+        double unitPrice = Double.parseDouble(view.getProductUnitPriceField().getText());
+        double cartonPrice = Double.parseDouble(view.getProductCartonPriceField().getText());
+
+        // Get selected vendor ID based on combo box selection
+        int vendorId = view.getVendorComboBox().getSelectedIndex() + 1;
+        System.out.println(vendorId);
+
+        Product product = new Product(0, vendorId, productName, productCategory,
+                originalPrice, salePrice, unitPrice, cartonPrice);
+        return product;
     }
 }
