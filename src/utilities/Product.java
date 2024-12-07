@@ -16,15 +16,15 @@ public class Product {
     String category;
     double originalPrice;
     double salePrice;
-    double priceByUnit;
     double priceByCarton;
 
-    public Product(int productId, int vendorId, String name, String category, double originalPrice, double salePrice, double priceByUnit, double priceByCarton) {
+    public Product(int productId, int vendorId, String name, String category, double originalPrice, double salePrice, double priceByCarton) {
+        this.productId = productId;
+        this.vendorId = vendorId;
         this.name = name;
         this.category = category;
         this.originalPrice = originalPrice;
         this.salePrice = salePrice;
-        this.priceByUnit = priceByUnit;
         this.priceByCarton = priceByCarton;
     }
 
@@ -58,14 +58,6 @@ public class Product {
 
     public void setSalePrice(double salePrice) {
         this.salePrice = salePrice;
-    }
-
-    public double getPriceByUnit() {
-        return priceByUnit;
-    }
-
-    public void setPriceByUnit(double priceByUnit) {
-        this.priceByUnit = priceByUnit;
     }
 
     public double getPriceByCarton() {

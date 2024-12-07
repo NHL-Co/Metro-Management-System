@@ -32,6 +32,11 @@ public class Bill {
         this.tax = tax;
         this.netAmount = netAmount;
     }
+    
+    public Bill(String branchCode)
+    {
+        this.branchCode = branchCode;
+    }
 
     public int getBillId() {
         return billId;
