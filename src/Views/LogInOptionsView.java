@@ -1,11 +1,9 @@
 package Views;
 
-import Controllers.LogInOptionsController;
 import utilities.ColorPalette;
 import utilities.Styling;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class LogInOptionsView extends JFrame {
     private final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -70,11 +68,6 @@ public class LogInOptionsView extends JFrame {
         cashierButton = new JRadioButton("Cashier");
         dataEntryOperatorButton = new JRadioButton("Data-Entry Operator");
 
-        superAdminButton.setBackground(Color.white);
-        branchManagerButton.setBackground(Color.white);
-        cashierButton.setBackground(Color.WHITE);
-        dataEntryOperatorButton.setBackground(Color.WHITE);
-
         ButtonGroup group = new ButtonGroup();
         group.add(superAdminButton);
         group.add(branchManagerButton);
@@ -82,15 +75,10 @@ public class LogInOptionsView extends JFrame {
         group.add(dataEntryOperatorButton);
 
         // Apply enhanced styling to the radio buttons
-        superAdminButton.setFont(new Font("Arial", Font.PLAIN, 15));
-        branchManagerButton.setFont(new Font("Arial", Font.PLAIN, 15));
-        cashierButton.setFont(new Font("Arial", Font.PLAIN, 15));
-        dataEntryOperatorButton.setFont(new Font("Arial", Font.PLAIN, 15));
-
-        superAdminButton.setFocusable(false);
-        branchManagerButton.setFocusable(false);
-        cashierButton.setFocusable(false);
-        dataEntryOperatorButton.setFocusable(false);
+        customizeRadioButton(superAdminButton);
+        customizeRadioButton(branchManagerButton);
+        customizeRadioButton(cashierButton);
+        customizeRadioButton(dataEntryOperatorButton);
 
         // Add radio buttons to the panel
         radioButtonPanel.add(superAdminButton);
@@ -99,49 +87,49 @@ public class LogInOptionsView extends JFrame {
         radioButtonPanel.add(dataEntryOperatorButton);
 
         loginForm.add(radioButtonPanel);
-        // Username and Password Fields with modern borders and larger sizes
-        JPanel usernamePanel = new JPanel(new GridBagLayout());
-        usernamePanel.setOpaque(false); // Ensure the panel itself is transparent
+
+        // Use GridBagLayout for Username and Password Fields to ensure close alignment
+        JPanel credentialsPanel = new JPanel(new GridBagLayout());
+        credentialsPanel.setOpaque(false);
+
         GridBagConstraints gbc = new GridBagConstraints();
-        JLabel enterUsernamelbl = new JLabel("Username:  ");
+        gbc.insets = new Insets(10, 10, 10, 10); // Adjust padding between components
+
+        // Username
+        JLabel enterUsernamelbl = new JLabel("Email:  ");
         Styling.setLabelHeading(enterUsernamelbl); // Larger font for label
         enterName = new JTextField();
         Styling.setTextField(enterName);
 
-        // Username Label Constraints
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        usernamePanel.add(enterUsernamelbl, gbc);
-
-        // Username TextField Constraints
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        usernamePanel.add(enterName, gbc);
-
-        loginForm.add(usernamePanel);
-
-        JPanel passwordPanel = new JPanel(new GridBagLayout());
-        passwordPanel.setOpaque(false); // Ensure the panel itself is transparent
+        // Password
         JLabel enterPasswordlbl = new JLabel("Password:  ");
         Styling.setLabelHeading(enterPasswordlbl); // Larger font for label
         enterPassword = new JPasswordField();
         Styling.setPasswordField(enterPassword);
 
-        // Password Label Constraints
+        // Username label and field
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
-        passwordPanel.add(enterPasswordlbl, gbc);
+        credentialsPanel.add(enterUsernamelbl, gbc);
 
-        // Password TextField Constraints
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        passwordPanel.add(enterPassword, gbc);
+        credentialsPanel.add(enterName, gbc);
 
-        loginForm.add(passwordPanel);
+        // Password label and field
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        credentialsPanel.add(enterPasswordlbl, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        credentialsPanel.add(enterPassword, gbc);
+
+        loginForm.add(credentialsPanel);
 
         // Submit Button with Fancy Hover Effect
         loginButton = new JButton("LOGIN");
@@ -151,7 +139,7 @@ public class LogInOptionsView extends JFrame {
         // Default Blue color
         Styling.setButton(loginButton);
 
-        loginForm.add(Box.createRigidArea(new Dimension(0, 30)));
+        loginForm.add(Box.createRigidArea(new Dimension(0, 30))); // Adjust the gap before the button
         loginForm.add(loginButton);
 
         // Add components to main frame
@@ -160,6 +148,43 @@ public class LogInOptionsView extends JFrame {
 
         setVisible(true);
     }
+
+    // Method to customize radio buttons
+    private void customizeRadioButton(JRadioButton radioButton) {
+        // Set the font, size, and border for radio buttons
+        radioButton.setFont(new Font("Bell MT", Font.PLAIN, 18));
+        radioButton.setForeground(ColorPalette.BLUE);  // A darker blue for the text
+
+        // Custom border and background
+        radioButton.setBorder(BorderFactory.createLineBorder(ColorPalette.BLUE, 2));
+        radioButton.setBackground(Color.white);
+        radioButton.setContentAreaFilled(false);
+        radioButton.setFocusPainted(false);
+        radioButton.setOpaque(true);
+
+        // Add hover effect
+        radioButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                radioButton.setBackground(new Color(230, 230, 255)); // Light blue hover
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                radioButton.setBackground(Color.white); // Reset background
+            }
+        });
+
+        // Change the background when selected
+        radioButton.addActionListener(e -> {
+            if (radioButton.isSelected()) {
+                radioButton.setBackground(new Color(130, 230, 255)); // Change to a light blue when selected
+            } else {
+                radioButton.setBackground(Color.white); // Reset to white when not selected
+            }
+        });
+    }
+
+
+
 
     // Getter for username
     public String getUsername() {
