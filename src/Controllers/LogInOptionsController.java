@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controllers;
 
 import Models.EmployeeModel;
 import Models.SuperAdmin;
 
-import Views.DEODashboardView;
 import Views.LogInOptionsView;
 import utilities.Employee;
 import utilities.MessageDialog;
@@ -47,7 +41,7 @@ public class LogInOptionsController {
         if(spaModel.adminLogin(usernameInput, pwdInput)) {
             MessageDialog.showSuccess("Successfully Logged In!");
             logInOptionsView.dispose();
-            new SuperAdminDashboardController(usernameInput, empModel);
+            new SuperAdminDashboardController(empModel);
         }
         else {
              MessageDialog.showFail("Incorrect email/password!");
@@ -57,32 +51,32 @@ public class LogInOptionsController {
     public static void employeeLogin() {
         String emailInput = logInOptionsView.getUsername();
         String pwdInput = logInOptionsView.getPassword();
-        String roleType = logInOptionsView.getSelectedRole();
-        Employee emp;
+        String role = logInOptionsView.getSelectedRole();
+        Employee emp = empModel.employeeLogin(emailInput, pwdInput);
 
-        if((emp = empModel.employeeLogin(emailInput, pwdInput)) != null)
+        if(emp != null && emp.getEmpType().equals(role))
         {
-            MessageDialog.showSuccess("Successfully Logged In!");
-            //logInOptionsView.dispose();
-
-            if(roleType.equals("B")) // Branch Manager
-            {
-                //new BranchMgrDashboardController(emp, empModel);
-            }
-            else if(roleType.equals("D")) // Data Entry Operator
-            {
-                new DEODashboardView();
-            }
-            else if(roleType.equals("C")) // Cashier
-            {
-                //new CashierDashboardController(emp, empModel);
+            switch (role) {
+                case "B" -> {
+                    MessageDialog.showSuccess("Successfully Logged In!");
+                    new BranchMgrDashboardController(emp, empModel);
+                    logInOptionsView.dispose();
+                }
+                case "D" -> {
+                    MessageDialog.showSuccess("Successfully Logged In!");
+                    new DEODashboardController(emp, empModel);
+                    logInOptionsView.dispose();
+                }
+                case "C" -> {
+                    MessageDialog.showSuccess("Successfully Logged In!");
+                    new CashierDashboardController(emp, empModel);
+                    logInOptionsView.dispose();
+                }
             }
         }
         else
         {
-            MessageDialog.showFail("Incorrect email/password!");
+            MessageDialog.showFail("No user found. Please enter correct credentials.");
         }
     }
-    
-    
 }
