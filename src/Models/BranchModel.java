@@ -30,7 +30,6 @@ public class BranchModel {
             stmt.setString(3, branch.getAddress());
             stmt.setString(4, branch.getPhone());
             stmt.setInt(5, branch.getNEmployees());
-            stmt.executeUpdate();
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
