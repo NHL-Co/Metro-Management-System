@@ -9,12 +9,13 @@ import java.awt.event.*;
 
 public class LogInOptionsView extends JFrame {
     private final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-    private JTextField enterName;
-    private JPasswordField enterPassword;
-    private JRadioButton superAdminButton;
-    private JRadioButton branchManagerButton;
-    private JRadioButton cashierButton;
-    private JRadioButton dataEntryOperatorButton;
+    private static JTextField enterName;
+    private static JPasswordField enterPassword;
+    private static JRadioButton superAdminButton;
+    private static JRadioButton branchManagerButton;
+    private static JRadioButton cashierButton;
+    private static JRadioButton dataEntryOperatorButton;
+    private static JButton loginButton;
 
     public LogInOptionsView() {
         setTitle("Login");
@@ -47,7 +48,7 @@ public class LogInOptionsView extends JFrame {
         // Logo at the top
         JLabel logo = new JLabel(new ImageIcon(new ImageIcon("src/Images/MetroLogo.png")
                 .getImage()
-                .getScaledInstance(d.width / 10, d.height / 4, Image.SCALE_SMOOTH)));
+                .getScaledInstance(d.width / 4, d.height / 4, Image.SCALE_SMOOTH)));
         logo.setAlignmentX(Component.CENTER_ALIGNMENT); // Center the logo
         loginForm.add(logo);
 
@@ -143,41 +144,14 @@ public class LogInOptionsView extends JFrame {
         loginForm.add(passwordPanel);
 
         // Submit Button with Fancy Hover Effect
-        JButton loginButton = new JButton("LOGIN");
+        loginButton = new JButton("LOGIN");
         loginButton.setPreferredSize(new Dimension(350, 60)); // Bigger and longer button
         loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Default Blue color
         Styling.setButton(loginButton);
 
-        // Hover Effect: Smooth Color Change on Hover
-        loginButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                loginButton.setBackground(ColorPalette.YELLOW); // Change color on hover
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                loginButton.setBackground(ColorPalette.BLUE); // Revert color on exit
-            }
-        });
-
-        // Action Listener for the login button
-        loginButton.addActionListener(e -> {
-            String username = getUsername(); // Get username
-            String password = getPassword(); // Get password
-            String roleType = getSelectedRole(); // Get selected role
-
-            // Call the appropriate controller method based on role selection
-            if (roleType.equals("Super Admin")) {
-                LogInOptionsController.superAdminLogin(username, password);
-            } else {
-                LogInOptionsController.employeeLogin(roleType, username, password);
-            }
-        });
-
-        loginForm.add(Box.createRigidArea(new Dimension(0, 30))); // Space before button
+        loginForm.add(Box.createRigidArea(new Dimension(0, 30)));
         loginForm.add(loginButton);
 
         // Add components to main frame
@@ -188,17 +162,22 @@ public class LogInOptionsView extends JFrame {
     }
 
     // Getter for username
-    private String getUsername() {
+    public String getUsername() {
         return enterName.getText();
     }
 
     // Getter for password
-    private String getPassword() {
+    public String getPassword() {
         return new String(enterPassword.getPassword());
     }
 
+    // Getter for login button
+    public JButton getLoginButton(){
+        return loginButton;
+    }
+
     // Getter for selected role
-    private String getSelectedRole() {
+    public String getSelectedRole() {
         if (superAdminButton.isSelected()) {
             return "Super Admin";
         } else if (branchManagerButton.isSelected()) {
