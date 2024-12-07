@@ -7,63 +7,73 @@ package Controllers;
 
 import Models.EmployeeModel;
 import Models.SuperAdmin;
-import javax.swing.JOptionPane;
+
+import Views.DEODashboardView;
+import Views.LogInOptionsView;
 import utilities.Employee;
 import utilities.MessageDialog;
 
-/**
- *
- * @author laiba
- */
 public class LogInOptionsController {
-
     
-    //LogInOptionsView logInOptionsView
-    private SuperAdmin spaModel;
-    private EmployeeModel empModel;
+    private static LogInOptionsView logInOptionsView = new LogInOptionsView();
+    private static SuperAdmin spaModel;
+    private static EmployeeModel empModel;
     
     public LogInOptionsController() {
         spaModel = new SuperAdmin();
         spaModel.seedAdmin("admin-user", "245362");
         empModel = new EmployeeModel();
-        // logInOptionsView.setAdminLoginBtnActionListener(e -> superAdminLogin());
-        // logInOptionsView.setEmployeeLoginBtnActionListener(e -> employeeLogin());
-        
+
+        //Set action listener
+        logInOptionsView.getLoginButton().addActionListener(e -> {
+            if(logInOptionsView.getSelectedRole().equals("Super Admin")){
+                superAdminLogin();
+            }
+            else if (logInOptionsView.getSelectedRole().isEmpty()) {
+                MessageDialog.showFail("Please Select your Role!");
+            }
+            else{
+                employeeLogin();
+            }
+        });
+
     }
     
-    public void superAdminLogin()
-    {
-        String usernameInput = "", pwdInput = ""; // get from view
-        if(spaModel.adminLogin(usernameInput, pwdInput))
-        {
-            MessageDialog.showSuccess("SuccessfullyLoggedIn!");
-            //logInOptionsView.dispose();
-            //new SuperAdminDashboardController(usernameInput, empModel);
+    public static void superAdminLogin() {
+        String usernameInput = logInOptionsView.getUsername();
+        String pwdInput = logInOptionsView.getPassword();
+
+        // authenticate super admin
+        if(spaModel.adminLogin(usernameInput, pwdInput)) {
+            MessageDialog.showSuccess("Successfully Logged In!");
+            logInOptionsView.dispose();
+            new SuperAdminDashboardController(usernameInput, empModel);
         }
-        else
-        {
+        else {
              MessageDialog.showFail("Incorrect email/password!");
         }
     }
     
-    public void employeeLogin()
-    {
-        String emailInput = "laiba@gmail.com", pwdInput = "123456"; // get from view
+    public static void employeeLogin() {
+        String emailInput = logInOptionsView.getUsername();
+        String pwdInput = logInOptionsView.getPassword();
+        String roleType = logInOptionsView.getSelectedRole();
         Employee emp;
+
         if((emp = empModel.employeeLogin(emailInput, pwdInput)) != null)
         {
-            MessageDialog.showSuccess("SuccessfullyLoggedIn!");
+            MessageDialog.showSuccess("Successfully Logged In!");
             //logInOptionsView.dispose();
-            String empType = emp.getEmpType();
-            if(empType.equals("B")) // Branch Manager
+
+            if(roleType.equals("B")) // Branch Manager
             {
                 //new BranchMgrDashboardController(emp, empModel);
             }
-            else if(empType.equals("D")) // Data Entry Operator
+            else if(roleType.equals("D")) // Data Entry Operator
             {
-                //new DEODashboardController(emp, empModel);
+                new DEODashboardView();
             }
-            else if(empType.equals("C")) // Cashier
+            else if(roleType.equals("C")) // Cashier
             {
                 //new CashierDashboardController(emp, empModel);
             }
