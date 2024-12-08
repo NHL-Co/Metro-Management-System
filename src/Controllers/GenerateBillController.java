@@ -120,6 +120,7 @@ public class GenerateBillController {
     public void reinitializeBill()
     {
         bill = new Bill(emp.getBranchCode());
+        products_qty.clear();
         view.clearBill();
     }
     
