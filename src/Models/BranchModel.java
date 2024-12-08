@@ -1,10 +1,13 @@
 package Models;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import utilities.*;
 
 public class BranchModel {
 
-    private final Connection conn = DBConnection.getInstance().getConnection();
+    private static final Connection conn = DBConnection.getInstance().getConnection();
 
     public boolean createTable() {
         String query = "CREATE TABLE IF NOT EXISTS branch (" +
@@ -82,4 +85,35 @@ public class BranchModel {
             return false;
         }
     }
+
+    public static List<String> getBranchCodes() {
+        List<String> branchCodes = new ArrayList<>();
+        String query = "SELECT branch_code FROM branch";
+
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                branchCodes.add(rs.getString("branch_code"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return branchCodes;
+    }
+
+    public static List<String> getBranchesWithoutManager() {
+        List<String> branches = new ArrayList<>();
+        String query = "SELECT branch_code FROM branch WHERE branch_code NOT IN (SELECT branch_code FROM employees WHERE emp_type = 'B')";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                branches.add(rs.getString("branch_code"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return branches;
+    }
+
 }

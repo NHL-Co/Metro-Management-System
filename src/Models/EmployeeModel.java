@@ -1,5 +1,8 @@
 package Models;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import utilities.*;
 public class EmployeeModel {
     private final Connection conn = DBConnection.getInstance().getConnection();
@@ -84,6 +87,7 @@ public class EmployeeModel {
 
     public Employee employeeLogin(String emailInput, String pwdInput)
     {
+        Employee employee;
         String query = "SELECT * FROM employees WHERE email = ? AND password = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, emailInput);
@@ -91,7 +95,7 @@ public class EmployeeModel {
             ResultSet rs = pstmt.executeQuery();
             if(rs.next())
             {
-                Employee employee = new Employee(rs.getInt("emp_no"), rs.getString("name"), rs.getString("email"), 
+                employee = new Employee(rs.getInt("emp_no"), rs.getString("name"), rs.getString("email"),
                         rs.getString("password"), rs.getString("branch_code"), rs.getDouble("salary"), 
                         rs.getString("emp_type"));
                 return employee;
@@ -101,5 +105,30 @@ public class EmployeeModel {
         }
         return null;
     }
+
+    public List<Employee> getEmployeesByType(String empType) {
+        List<Employee> employees = new ArrayList<>();
+        String query = "SELECT * FROM employees WHERE emp_type = ?";  // Placeholder for emp_type
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, empType); // Set the empType parameter
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Employee employee = new Employee(
+                        rs.getInt("emp_no"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("branch_code"),
+                        rs.getDouble("salary"),
+                        rs.getString("emp_type")
+                );
+                employees.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+
 }
 
