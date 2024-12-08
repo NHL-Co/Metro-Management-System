@@ -21,7 +21,7 @@ public class DEODashboardController {
     public DEODashboardController(Employee deo, EmployeeModel empModel) {
         this.prodModel = new ProductModel();
         this.vendorModel = new VendorModel();
-        this.view = new DEODashboardView(vendorModel);
+        this.view = new DEODashboardView(vendorModel,deo);
         if(deo.getPassword().equals("123456")){
             new ChangePasswordController(view,deo,empModel,true);
             view.setVisible(false);
