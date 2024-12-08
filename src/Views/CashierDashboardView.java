@@ -60,6 +60,7 @@ public class CashierDashboardView extends JFrame {
         
         add(dashboardPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
+        Styling.footer(this);
     }
     
     public JButton setButtons(JPanel optionsPanel, String text, String filePath, int width, int height){

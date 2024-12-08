@@ -110,9 +110,11 @@ public class ChangePasswordView extends JFrame {
         
         centerPanel.add(buttonPanel);
         
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(100, 500, 100, 500)); // t l b r
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(50, 500, 50, 500)); // t l b r
         add(dashboardPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
+        
+        Styling.footer(this);
     }
     
     public JTextField getTfEmail() {

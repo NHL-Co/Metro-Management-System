@@ -93,6 +93,7 @@ public class GenerateBillView extends JFrame {
         add(dashboardPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
         add(rightPane, BorderLayout.EAST);
+        Styling.footer(this);
     }
     
     public void makeLeftPanel()
@@ -192,7 +193,7 @@ public class GenerateBillView extends JFrame {
 
         // Product Info Panel (for ID, Name, and Prices)
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new GridLayout(4, 1, 0, 0));
+        infoPanel.setLayout(new GridLayout(0, 1, 0, 0));
         infoPanel.setBackground(Color.WHITE);
 
         // Product ID
