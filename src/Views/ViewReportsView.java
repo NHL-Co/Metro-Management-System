@@ -211,8 +211,6 @@ public class ViewReportsView extends JFrame {
                 if (row >= 0) {
                     int reportId = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
                     String message = "Are you sure you want to delete report ID " + reportId + "?";
-                    // Implement confirmation dialog for deletion
-                    // If confirmed, delete the report and remove the row from the table
                 }
             });
         }
