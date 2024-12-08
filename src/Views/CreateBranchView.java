@@ -2,6 +2,7 @@ package Views;
 
 import Controllers.SuperAdminDashboardController;
 import Models.EmployeeModel;
+import Models.ReportModel;
 import utilities.ColorPalette;
 import utilities.Styling;
 
@@ -10,15 +11,17 @@ import java.awt.*;
 
 public class CreateBranchView extends JFrame {
     private final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-    private JTextField branchCodeField;
+    private JLabel branchCodeField;
     private JComboBox<String> cityComboBox;
     private JTextField addressField;
     private JTextField phoneField;
     private EmployeeModel empModel;
     private static JButton saveButton;
+    private ReportModel reportModel;
 
-    public CreateBranchView(EmployeeModel empModel) {
+    public CreateBranchView(EmployeeModel empModel, ReportModel reportModel) {
         this.empModel = empModel;
+        this.reportModel = reportModel;
 
         setTitle("Create Branch");
         ImageIcon icon = new ImageIcon("src/Images/MetroLogo.png");
@@ -47,13 +50,13 @@ public class CreateBranchView extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Branch Code
+        // Branch Code (initialize branchCodeField first)
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Branch Code:"), gbc);
         gbc.gridx = 1;
-        branchCodeField = new JTextField(20);
-        Styling.setTextField(branchCodeField);
+        branchCodeField = new JLabel();  // Initialize branchCodeField here
+        branchCodeField.setFont(Styling.bodyFont);
         formPanel.add(branchCodeField, gbc);
 
         // City
@@ -61,7 +64,10 @@ public class CreateBranchView extends JFrame {
         gbc.gridy = 1;
         formPanel.add(new JLabel("City:"), gbc);
         gbc.gridx = 1;
+
+        // Initialize cityComboBox with Pakistani cities
         cityComboBox = new JComboBox<>(getPakistaniCities());
+        cityComboBox.addActionListener(e -> generateBranchCode());
         Styling.setComboBox(cityComboBox);
         formPanel.add(cityComboBox, gbc);
 
@@ -96,7 +102,7 @@ public class CreateBranchView extends JFrame {
 
         // Add action for cancel button
         cancelButton.addActionListener(e -> {
-            new SuperAdminDashboardController(empModel);
+            new SuperAdminDashboardController(empModel,reportModel);
             dispose();
         });
 
@@ -120,9 +126,35 @@ public class CreateBranchView extends JFrame {
     }
 
 
+    public void generateBranchCode() {
+        String city = getSelectedCity();
+        String cityCode = getCityCode(city);
+        if (cityCode != null) {
+            branchCodeField.setText( cityCode +"001"); // Default to the first branch until dynamically updated
+        }
+    }
+
+
+    private String getCityCode(String city) {
+        return switch (city) {
+            case "Karachi" -> "KHI";
+            case "Lahore" -> "LHR";
+            case "Islamabad" -> "ISB";
+            case "Rawalpindi" -> "RWP";
+            case "Peshawar" -> "PEW";
+            case "Quetta" -> "UET";
+            case "Faisalabad" -> "FSD";
+            case "Multan" -> "MUX";
+            case "Sialkot" -> "SKT";
+            case "Hyderabad" -> "HYD";
+            default -> null;
+        };
+    }
+
     private String[] getPakistaniCities() {
         return new String[]{"Karachi", "Lahore", "Islamabad", "Rawalpindi", "Peshawar", "Quetta", "Faisalabad", "Multan", "Sialkot", "Hyderabad"};
     }
+
 
     // Getters for form fields
     public String getBranchCode() {

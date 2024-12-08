@@ -1,13 +1,8 @@
-
 package Views;
 
-import Controllers.BranchMgrDashboardController;
-import Controllers.SuperAdminDashboardController;
 import Models.ReportModel;
-import utilities.Employee;
-import Models.EmployeeModel;
+import utilities.Report;
 import utilities.ColorPalette;
-import utilities.MessageDialog;
 import utilities.Styling;
 
 import javax.swing.*;
@@ -19,22 +14,18 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.List;
 
-public class ViewEmployeesView extends JFrame {
+public class ViewReportsView extends JFrame {
     private final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
     private JTextField searchField;
-    public JTable employeeTable;
+    public JTable reportTable;
     private DefaultTableModel tableModel;
-    private EmployeeModel empModel;
-    private char empType; // Employee type ('B', 'C', 'D')
+    private ReportModel reportModel;
     private JButton backButton;
-    private Employee emp;
 
-    public ViewEmployeesView(Employee emp, EmployeeModel empModel, ReportModel report, char empType) {
-        this.empModel = empModel;
-        this.empType = empType;
-        this.emp = emp;
+    public ViewReportsView(ReportModel reportModel) {
+        this.reportModel = reportModel;
 
-        setTitle("View Employees - " + getEmployeeTypeTitle());
+        setTitle("View Reports");
         ImageIcon icon = new ImageIcon("src/Images/MetroLogo.png");
         setIconImage(icon.getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,23 +34,19 @@ public class ViewEmployeesView extends JFrame {
         setBackground(ColorPalette.LIGHT_GREY);
         setLocationRelativeTo(null);
         getContentPane().setBackground(Color.WHITE);
-        init(report);
+        init();
     }
 
-    private void init(ReportModel report) {
+    private void init() {
         setLayout(new BorderLayout());
 
-        // Dashboard
+        // Dashboard Panel (Optional, you can customize this)
         JPanel dashboardPanel = new JPanel();
-        if (emp == null) {
-            Styling.setDashboard(this, dashboardPanel, d, getDashboardTitle(), "Super Admin");
-        } else {
-            Styling.setDashboard(this, dashboardPanel, d, getDashboardTitle(), emp.getName());
-        }
+        Styling.setDashboard(this, dashboardPanel, d, "Reports Dashboard", "Admin");
         add(dashboardPanel, BorderLayout.NORTH);
 
         // Main Content Panel
-        add(createViewEmployeesPanel(), BorderLayout.CENTER);
+        add(createViewReportsPanel(), BorderLayout.CENTER);
 
         // Bottom Section
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -71,16 +58,10 @@ public class ViewEmployeesView extends JFrame {
         backPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         backButton = new JButton("Back");
         Styling.setButton(backButton);
-
         backButton.addActionListener(e -> {
-            if (emp == null) {
-                new SuperAdminDashboardController(empModel,report);
-            } else {
-                new BranchMgrDashboardController(emp, empModel,report);
-            }
-            dispose();
+            // Implement back button action if needed
+            dispose(); // Close the current window
         });
-
         backPanel.add(backButton);
         JPanel footerPanel = Styling.footer(this);
 
@@ -91,7 +72,7 @@ public class ViewEmployeesView extends JFrame {
         setVisible(true);
     }
 
-    private JPanel createViewEmployeesPanel() {
+    private JPanel createViewReportsPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
         panel.setPreferredSize(new Dimension(d.width, d.height - 200));
@@ -118,41 +99,39 @@ public class ViewEmployeesView extends JFrame {
         searchPanel.setBorder(BorderFactory.createEmptyBorder(20, 400, 20, 400));
         panel.add(searchPanel, BorderLayout.NORTH);
 
-        String[] columns = {"ID", "Name", "Email", "Branch Code", "Salary", "Actions"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 5; // Only "Actions" column is editable
-            }
-        };
-        employeeTable = new JTable(tableModel);
+        String[] columns = {"Report ID", "Branch Code", "Range Tag", "Start Date", "End Date", "Sales", "Remaining Stock", "Profit", "Actions"};
+        tableModel = new DefaultTableModel(columns, 0);
+        reportTable = new JTable(tableModel);
 
         // Styling the table
-        employeeTable.setBackground(Color.WHITE);
-        employeeTable.setFont(Styling.bodyFont);
-        employeeTable.setRowHeight(30);
-        employeeTable.getTableHeader().setFont(Styling.bodyFont);
-        employeeTable.getTableHeader().setBackground(ColorPalette.BLUE);
-        employeeTable.getTableHeader().setForeground(Color.WHITE);
-        employeeTable.setGridColor(ColorPalette.LIGHT_GREY);
-        employeeTable.setIntercellSpacing(new Dimension(10, 10));
-        employeeTable.setSelectionBackground(new Color(230, 230, 255));
+        reportTable.setBackground(Color.WHITE);
+        reportTable.setFont(Styling.bodyFont);
+        reportTable.setRowHeight(30);
+        reportTable.getTableHeader().setFont(Styling.bodyFont);
+        reportTable.getTableHeader().setBackground(ColorPalette.BLUE);
+        reportTable.getTableHeader().setForeground(Color.WHITE);
+        reportTable.setGridColor(ColorPalette.LIGHT_GREY);
+        reportTable.setIntercellSpacing(new Dimension(10, 10));
+        reportTable.setSelectionBackground(new Color(230, 230, 255));
 
-        TableColumnModel columnModel = employeeTable.getColumnModel();
+        TableColumnModel columnModel = reportTable.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);
-        columnModel.getColumn(1).setPreferredWidth(150);
-        columnModel.getColumn(2).setPreferredWidth(200);
+        columnModel.getColumn(1).setPreferredWidth(100);
+        columnModel.getColumn(2).setPreferredWidth(100);
         columnModel.getColumn(3).setPreferredWidth(100);
         columnModel.getColumn(4).setPreferredWidth(100);
         columnModel.getColumn(5).setPreferredWidth(100);
+        columnModel.getColumn(6).setPreferredWidth(120);
+        columnModel.getColumn(7).setPreferredWidth(100);
+        columnModel.getColumn(8).setPreferredWidth(100);
 
-        employeeTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
-        employeeTable.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
+        reportTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
+        reportTable.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox()));
 
-        JScrollPane scrollPane = new JScrollPane(employeeTable);
+        JScrollPane scrollPane = new JScrollPane(reportTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        loadEmployees();
+        loadReports();
 
         searchField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -174,10 +153,11 @@ public class ViewEmployeesView extends JFrame {
         return panel;
     }
 
-    public void loadEmployees() {
-        List<Employee> employees = empModel.getEmployeesByType(String.valueOf(empType));
-        for (Employee emp : employees) {
-            Object[] row = {emp.getEmpNo(), emp.getName(), emp.getEmail(), emp.getBranchCode(), emp.getSalary(), "Delete"};
+    public void loadReports() {
+        List<Report> reports = reportModel.getAllReports(); // Assuming this method exists to fetch reports
+        for (Report report : reports) {
+            Object[] row = {report.getReportId(), report.getBranchCode(), report.getRangeTag(), report.getStartDate(),
+                    report.getEndDate(), report.getSales(), report.getRemainingStock(), report.getProfit(), "Delete"};
             tableModel.addRow(row);
         }
     }
@@ -186,28 +166,19 @@ public class ViewEmployeesView extends JFrame {
         String filterText = searchField.getText().toLowerCase();
         tableModel.setRowCount(0); // Clear the table
 
-        List<Employee> employees = empModel.getEmployeesByType(String.valueOf(empType));
-        for (Employee emp : employees) {
-            boolean matches = emp.getName().toLowerCase().contains(filterText) ||
-                    emp.getEmail().toLowerCase().contains(filterText) ||
-                    emp.getBranchCode().toLowerCase().contains(filterText) ||
-                    String.valueOf(emp.getSalary()).toLowerCase().contains(filterText);
+        List<Report> reports = reportModel.getAllReports(); // Assuming this method exists to fetch reports
+        for (Report report : reports) {
+            boolean matches = String.valueOf(report.getReportId()).contains(filterText) ||
+                    report.getBranchCode().toLowerCase().contains(filterText) ||
+                    report.getRangeTag().toLowerCase().contains(filterText) ||
+                    String.valueOf(report.getSales()).toLowerCase().contains(filterText) ||
+                    String.valueOf(report.getProfit()).toLowerCase().contains(filterText);
 
             if (matches) {
-                Object[] row = {emp.getEmpNo(), emp.getName(), emp.getEmail(), emp.getBranchCode(), emp.getSalary(), "Delete"};
+                Object[] row = {report.getReportId(), report.getBranchCode(), report.getRangeTag(), report.getStartDate(),
+                        report.getEndDate(), report.getSales(), report.getRemainingStock(), report.getProfit(), "Delete"};
                 tableModel.addRow(row);
             }
-        }
-    }
-
-    private String getEmployeeTypeTitle() {
-        switch (empType) {
-            case 'C':
-                return "Cashiers";
-            case 'D':
-                return "Data Entry Operators";
-            default:
-                return "Branch Managers";
         }
     }
 
@@ -236,17 +207,12 @@ public class ViewEmployeesView extends JFrame {
             button.setOpaque(true);
 
             button.addActionListener(e -> {
-                row = employeeTable.getSelectedRow();
+                row = reportTable.getSelectedRow();
                 if (row >= 0) {
-                    int empId = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
-                    String message = "Are you sure you want to delete employee ID " + empId + "?";
-                    MessageDialog.showConfirmation(message,
-                            () -> {
-                                empModel.deleteEmployee(empId);
-                                tableModel.removeRow(row);
-                            }, () -> {
-                                //do nothing
-                            });
+                    int reportId = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
+                    String message = "Are you sure you want to delete report ID " + reportId + "?";
+                    // Implement confirmation dialog for deletion
+                    // If confirmed, delete the report and remove the row from the table
                 }
             });
         }
@@ -260,14 +226,6 @@ public class ViewEmployeesView extends JFrame {
         @Override
         public Object getCellEditorValue() {
             return "Delete";
-        }
-    }
-
-    private String getDashboardTitle() {
-        switch (empType) {
-            case 'C': return "Branch Manager - View Cashier";
-            case 'D': return "Branch Manager - View Data Entry Operator";
-            default: return "Super Admin - View Branch Manager";
         }
     }
 }

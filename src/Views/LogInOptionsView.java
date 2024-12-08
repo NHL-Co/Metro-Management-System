@@ -1,3 +1,4 @@
+
 package Views;
 
 import utilities.ColorPalette;
@@ -38,25 +39,25 @@ public class LogInOptionsView extends JFrame {
 
         JPanel loginForm = new JPanel();
         loginForm.setLayout(new BoxLayout(loginForm, BoxLayout.Y_AXIS));
-        loginForm.setOpaque(false); 
+        loginForm.setOpaque(false);
         loginForm.setBorder(BorderFactory.createEmptyBorder(100, 50, 100, 50));
 
         JLabel logo = new JLabel(new ImageIcon(new ImageIcon("src/Images/MetroLogo.png")
                 .getImage()
                 .getScaledInstance(d.width / 4, d.height / 4, Image.SCALE_SMOOTH)));
-        logo.setAlignmentX(Component.CENTER_ALIGNMENT); 
+        logo.setAlignmentX(Component.CENTER_ALIGNMENT);
         loginForm.add(logo);
 
         JLabel loginlbl = new JLabel("LOGIN");
         loginlbl.setFont(new Font("Arial", Font.BOLD, 36));
         loginlbl.setForeground(ColorPalette.BLUE);
-        loginlbl.setAlignmentX(Component.CENTER_ALIGNMENT); 
-        loginForm.add(Box.createRigidArea(new Dimension(0, 40))); 
+        loginlbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loginForm.add(Box.createRigidArea(new Dimension(0, 40)));
         loginForm.add(loginlbl);
 
         JPanel radioButtonPanel = new JPanel();
-        radioButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10)); 
-        radioButtonPanel.setOpaque(false); 
+        radioButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        radioButtonPanel.setOpaque(false);
 
         superAdminButton = new JRadioButton("Super Admin");
         branchManagerButton = new JRadioButton("Branch Manager");
@@ -85,7 +86,7 @@ public class LogInOptionsView extends JFrame {
         credentialsPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); 
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         JLabel enterUsernamelbl = new JLabel("Email:  ");
         Styling.setLabelHeading(enterUsernamelbl);
@@ -132,7 +133,7 @@ public class LogInOptionsView extends JFrame {
         buttonPanel.add(loginButton);
         buttonPanel.add(exitButton);
 
-        loginForm.add(Box.createRigidArea(new Dimension(0, 30))); 
+        loginForm.add(Box.createRigidArea(new Dimension(0, 30)));
         loginForm.add(buttonPanel);
 
         add(groceryImage, BorderLayout.WEST);
@@ -155,47 +156,47 @@ public class LogInOptionsView extends JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 radioButton.setBackground(new Color(230, 230, 255));
             }
-                
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                radioButton.setBackground(Color.white); 
-            }
-        });
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    radioButton.setBackground(Color.white);
+                }
+            });
 
         radioButton.addActionListener(e -> {
-            if (radioButton.isSelected()) {
-                radioButton.setBackground(new Color(130, 230, 255));
-            } else {
-                radioButton.setBackground(Color.white);
-            }
-        });
-    }
-
-    public String getUsername() {
-        return enterName.getText();
-    }
-
-    public String getPassword() {
-        return new String(enterPassword.getPassword());
-    }
-
-    public JButton getLoginButton(){
-        return loginButton;
-    }
-
-    public JButton getExitButton(){
-        return exitButton;
-    }
-
-    public String getSelectedRole() {
-        if (superAdminButton.isSelected()) {
-            return "Super Admin";
-        } else if (branchManagerButton.isSelected()) {
-            return "B";
-        } else if (cashierButton.isSelected()) {
-            return "C";
-        } else if (dataEntryOperatorButton.isSelected()) {
-            return "D"; 
+                if (radioButton.isSelected()) {
+                    radioButton.setBackground(new Color(130, 230, 255));
+                } else {
+                    radioButton.setBackground(Color.white);
+                }
+            });
         }
-        return "";
+
+        public String getUsername() {
+            return enterName.getText();
+        }
+
+        public String getPassword() {
+            return new String(enterPassword.getPassword());
+        }
+
+        public JButton getLoginButton(){
+            return loginButton;
+        }
+
+        public JButton getExitButton(){
+            return exitButton;
+        }
+
+        public String getSelectedRole() {
+            if (superAdminButton.isSelected()) {
+                return "Super Admin";
+            } else if (branchManagerButton.isSelected()) {
+                return "B";
+            } else if (cashierButton.isSelected()) {
+                return "C";
+            } else if (dataEntryOperatorButton.isSelected()) {
+                return "D";
+            }
+            return "";
+        }
     }
-}

@@ -1,3 +1,4 @@
+
 package Views;
 
 import Models.ProductModel;
@@ -104,7 +105,7 @@ public class DEODashboardView extends JFrame {
         mainPanel.add(contentPanel, "ContentPanel");
 
         // Create and set up the complete dashboard
-         Styling.setDashboard(this, headerPanel, d, "DEO DASHBOARD", employee.getName());
+        Styling.setDashboard(this, headerPanel, d, "DEO DASHBOARD", employee.getName());
 
         // Add the header panel to the top of the dashboard
         add(headerPanel, BorderLayout.NORTH);
@@ -663,13 +664,13 @@ public class DEODashboardView extends JFrame {
         if (selectedRow != -1) {
             int productId = (int) tableModel.getValueAt(selectedRow, 0);
             if (productModel.deleteProduct(productId)) {
-               MessageDialog.showSuccess("Product Deleted Successfully");
+                MessageDialog.showSuccess("Product Deleted Successfully");
                 loadProductData();
             } else {
-               MessageDialog.showFail("Failed to Delete Product");
+                MessageDialog.showFail("Failed to Delete Product");
             }
         } else {
-           MessageDialog.showSuccess("Please Select a Product to Delete");
+            MessageDialog.showSuccess("Please Select a Product to Delete");
         }
     }
 
