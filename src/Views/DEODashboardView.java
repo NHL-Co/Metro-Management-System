@@ -52,7 +52,7 @@ public class DEODashboardView extends JFrame {
     // Categories array
     private String[] categories;
 
-    public DEODashboardView(VendorModel vendorModel) {
+    public DEODashboardView(VendorModel vendorModel, Employee employee) {
         this.vendorModel = vendorModel;
 
         setTitle("Data Entry Operator Dashboard");
@@ -65,35 +65,48 @@ public class DEODashboardView extends JFrame {
         getContentPane().setBackground(Color.WHITE);
         setLayout(new BorderLayout());
 
-        initializeUI();
+        initializeUI(employee);
         setVisible(true);
     }
 
-    private void initializeUI() {
+    private void initializeUI(Employee employee) {
+        // Create the header panel
         JPanel headerPanel = new JPanel();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        Styling.setDashboard(this,headerPanel, d, "DEO DASHBOARD");
-        add(headerPanel, BorderLayout.NORTH);
 
+        // Initialize the main panel
         mainPanel = new JPanel(new CardLayout());
         JPanel centerPanel = createCenterPanel();
         contentPanel = new JPanel(new CardLayout());
 
+        // Create the panels for vendors and products
         createVendorPanel();
         createProductPanel();
         createViewProductsPanel();
-        createViewVendorsPanel();// New method for viewing products
+        createViewVendorsPanel();
 
+        // Add the panels to the content panel
         contentPanel.add(vendorPanel, "VendorPanel");
         contentPanel.add(productPanel, "ProductPanel");
         contentPanel.add(viewProductsPanel, "ViewProductsPanel");
         contentPanel.add(viewVendorsPanel, "ViewVendorsPanel");
 
+        // Add the center panel and content panel to the main panel
         mainPanel.add(centerPanel, "CenterPanel");
         mainPanel.add(contentPanel, "ContentPanel");
 
-        add(mainPanel, BorderLayout.CENTER);
+        // Create and set up the complete dashboard
+         Styling.setDashboard(this, headerPanel, d, "DEO DASHBOARD", employee.getName());
+
+        // Add the header panel to the top of the dashboard
+        add(headerPanel, BorderLayout.NORTH);
+        Styling.footer(this);
+
+        // Add the vertical panel to the center of the layout
+        add(mainPanel,BorderLayout.CENTER);
     }
+
+
 
     private JPanel createCenterPanel() {
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -562,7 +575,7 @@ public class DEODashboardView extends JFrame {
         if (selectedRow != -1) {
             int productId = (int) tableModel.getValueAt(selectedRow, 0);
             if (productModel.deleteProduct(productId)) {
-                JOptionPane.showMessageDialog(this, "Product deleted successfully.");
+               MessageDialog.showSuccess("Product Deleted Successfully");
                 loadProductData();
             } else {
                MessageDialog.showFail("Failed to Delete Product");
