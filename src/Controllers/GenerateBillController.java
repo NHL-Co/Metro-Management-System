@@ -38,7 +38,7 @@ public class GenerateBillController {
         this.prodModel = prodModel;
         this.emp = emp;
         this.mainView = mainView;
-        products = prodModel.getAllProducts();
+        products = (ArrayList<Product>) prodModel.getAllProducts();
         filterProducts();
         view = new GenerateBillView(products, emp.getName());
         addProductToBill();
