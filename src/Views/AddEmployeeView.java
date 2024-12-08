@@ -21,14 +21,6 @@ public class AddEmployeeView extends JFrame {
     private Employee emp;
     private char empType;
 
-    /**
-     * Generic Add Employee View Constructor
-     *
-     * @param emp      Current employee (null if not logged in)
-     * @param empModel EmployeeModel object
-     * @param empType  Employee Type ('B' for Branch Manager, 'C' for Cashier, 'D' for Data Entry Operator)
-     * @param branches List of branch codes to populate the branch dropdown
-     */
     public AddEmployeeView(Employee emp, EmployeeModel empModel, char empType, List<String> branches) {
         this.emp = emp;
         this.empType = empType;
@@ -70,14 +62,12 @@ public class AddEmployeeView extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.WHITE);
 
-        // Form
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Name Field
         gbc.gridx = 0;
         gbc.gridy = 0;
         formPanel.add(new JLabel("Name:"), gbc);
@@ -86,7 +76,6 @@ public class AddEmployeeView extends JFrame {
         Styling.setTextField(nameField);
         formPanel.add(nameField, gbc);
 
-        // Email Field
         gbc.gridx = 0;
         gbc.gridy = 1;
         formPanel.add(new JLabel("Email:"), gbc);
@@ -95,23 +84,33 @@ public class AddEmployeeView extends JFrame {
         Styling.setTextField(emailField);
         formPanel.add(emailField, gbc);
 
-        // Branch Code ComboBox
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        formPanel.add(new JLabel("Branch Code:"), gbc);
-        gbc.gridx = 1;
-        branchCodeComboBox = new JComboBox<>(branches.toArray(new String[0]));
-        Styling.setComboBox(branchCodeComboBox);
-        formPanel.add(branchCodeComboBox, gbc);
+        if(emp == null){
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            formPanel.add(new JLabel("Branch Code:"), gbc);
+            gbc.gridx = 1;
+            branchCodeComboBox = new JComboBox<>(branches.toArray(new String[0]));
+            Styling.setComboBox(branchCodeComboBox);
+            formPanel.add(branchCodeComboBox, gbc);
 
-        // Salary Field
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        formPanel.add(new JLabel("Salary:"), gbc);
-        gbc.gridx = 1;
-        salaryField = new JTextField(20);
-        Styling.setTextField(salaryField);
-        formPanel.add(salaryField, gbc);
+            gbc.gridx = 0;
+            gbc.gridy = 3;
+            formPanel.add(new JLabel("Salary:"), gbc);
+            gbc.gridx = 1;
+            salaryField = new JTextField(20);
+            Styling.setTextField(salaryField);
+            formPanel.add(salaryField, gbc);
+
+        }
+        else{
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            formPanel.add(new JLabel("Salary:"), gbc);
+            gbc.gridx = 1;
+            salaryField = new JTextField(20);
+            Styling.setTextField(salaryField);
+            formPanel.add(salaryField, gbc);
+        }
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
@@ -130,9 +129,6 @@ public class AddEmployeeView extends JFrame {
         return panel;
     }
 
-    /**
-     * Get the appropriate window title based on empType
-     */
     private String getWindowTitle() {
         switch (empType) {
             case 'C': return "Add Cashier";
@@ -141,9 +137,6 @@ public class AddEmployeeView extends JFrame {
         }
     }
 
-    /**
-     * Get the appropriate dashboard title based on empType
-     */
     private String getDashboardTitle() {
         switch (empType) {
             case 'C': return "Branch Manager - Add Cashier";
@@ -152,7 +145,6 @@ public class AddEmployeeView extends JFrame {
         }
     }
 
-    // Getters for form fields
     public JTextField getNameField() {
         return nameField;
     }
