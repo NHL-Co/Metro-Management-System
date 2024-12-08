@@ -26,7 +26,7 @@ public class ChangePasswordController {
         this.employee = employee;
         this.empModel = empModel;
         this.mainView = mainView;
-        view = new ChangePasswordView(firstTime);
+        view = new ChangePasswordView(firstTime, employee.getName());
         view.setSubmitBtnListener(e -> submit());
         view.setBackBtnListener(e -> back());
     }

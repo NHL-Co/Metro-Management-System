@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import utilities.Bill;
 import utilities.Employee;
 import utilities.GlobalValues;
+import utilities.MessageDialog;
 import utilities.Product;
 
 /**
@@ -32,20 +34,23 @@ public class GenerateBillController {
     private Map<Product, Integer> products_qty;
     private GenerateBillView view;
     private ArrayList<Product> products;
+    private JFrame mainView;
     private Employee emp;
 
-    public GenerateBillController(ProductModel prodModel, BillModel billModel, Employee emp) 
+    public GenerateBillController(JFrame mainView, ProductModel prodModel, BillModel billModel, Employee emp) 
     {
         bill = new Bill(emp.getBranchCode());
         products_qty = new HashMap<>();
         this.billModel = billModel;
         this.prodModel = prodModel;
         this.emp = emp;
+        this.mainView = mainView;
         products = prodModel.getProducts();
         filterProducts();
-        view = new GenerateBillView(products);
+        view = new GenerateBillView(products, emp.getName());
         addProductToBill();
         view.setConfirmBtnListener(e -> confirmBill());
+        view.setBackBtnActionListener(e -> back());
     }
     
     public void filterProducts()
@@ -60,52 +65,56 @@ public class GenerateBillController {
         }
     }
     
+     // Set "Add" button listeners
     public void addProductToBill()
     {
-        HashMap<Product, JPanel> productCards = view.getProductCards();
+        HashMap<Product, JButton> productCards = view.getProductCards();
 
-        for (Product product : productCards.keySet()) {
-        JPanel btnPanel = productCards.get(product);
+        for (Product product : productCards.keySet())
+        {
+            JButton addBtn = productCards.get(product);
+            
+            addBtn.addActionListener(e -> {
+                int currentQty = products_qty.getOrDefault(product, 0);
+                
+                products_qty.put(product, currentQty + 1); // update map for bill
+                view.addProductToBill(product, currentQty + 1); // update view
+                
+                System.out.println("Added unit of: " + product.getName() + ". New quantity: " + products_qty.get(product));
+            });
 
-        // Add Unit buttons listeners
-        JButton addUnitButton = (JButton) btnPanel.getComponent(0);
-        addUnitButton.addActionListener(e -> {
-            int currentQty = products_qty.getOrDefault(product, 0);
-            products_qty.put(product, currentQty + 1);
-            System.out.println("Added unit of: " + product.getName() + ". New quantity: " + products_qty.get(product));
-            view.addProductToBill(product, currentQty + 1);
-        });
-
-        // Add Carton buttons listeners
-        JButton addCartonButton = (JButton) btnPanel.getComponent(1);
-        addCartonButton.addActionListener(e -> {
-            int currentQty = products_qty.getOrDefault(product, 0);
-            products_qty.put(product, currentQty);
-            System.out.println("Added carton of: " + product.getName() + ". New quantity: " + products_qty.get(product));
-            view.addProductCartonToBill(product, currentQty);
-        });
         }
     }
     
     public void confirmBill()
     {
+        bill.setProducts_qty(products_qty);
+        bill.setDate(LocalDate.now());
+        
         boolean cash = view.getCashCheckBox().isSelected();
         double totalAmount = calculateTotalAmount();
         double tax = calculateTax(totalAmount);
         double netAmount = totalAmount + tax;
-        bill.setDate(LocalDate.now());
+        
         bill.setTotalAmount(totalAmount);
         bill.setTax(tax);
         bill.setNetAmount(netAmount);
-        bill.setProducts_qty(products_qty);
         bill.setCash(cash);
-        //billModel.addBill(bill);
         
-        // call show bill on screen view
-        //pbmodel.updateProductQuantities(bill);
-        
-        // after confirming jdialog showing the bill
-        //reinitializeBill()
+        MessageDialog.showBillAndConfirmation(bill, this);
+    }
+    
+    public void back()
+    {
+        mainView.setVisible(true);
+        view.dispose();
+    }
+    
+    public void addBill()
+    {
+        billModel.addBill(bill);
+        pbmodel.updateProductQuantities(bill);
+        reinitializeBill();
     }
     
     public void reinitializeBill()

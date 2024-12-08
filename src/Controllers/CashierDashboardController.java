@@ -28,7 +28,7 @@ public class CashierDashboardController {
         this.empModel = empModel;
         this.prodModel = new ProductModel();
         this.billModel = new BillModel();
-        view = new CashierDashboardView();
+        view = new CashierDashboardView(cashier.getName());
         view.setGenBillButtonListener(e -> generateBill());
         view.setChangePwdButtonListener(e -> changePwd());
         
@@ -48,7 +48,7 @@ public class CashierDashboardController {
     
     public void generateBill()
     {
-            new GenerateBillController(prodModel, billModel, cashier);
+            new GenerateBillController(view, prodModel, billModel, cashier);
             view.setVisible(false);
     }
     
