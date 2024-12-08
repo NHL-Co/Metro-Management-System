@@ -177,7 +177,7 @@ public class Styling {
         comboBox.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1)); // Border styling
         comboBox.setPreferredSize(new Dimension(200, 30)); // Size
     }
-    public static void footer(JFrame frame) {
+    public static JButton footer(JFrame frame) {
         JPanel footerPanel = new JPanel();
         footerPanel.setBackground(ColorPalette.BLUE);
         footerPanel.setPreferredSize(new Dimension(frame.getWidth(), 40));
@@ -188,6 +188,7 @@ public class Styling {
         footerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         footerPanel.add(footerLabel, BorderLayout.CENTER);
         frame.add(footerPanel, BorderLayout.SOUTH);
+        return footerPanel;
     }
 
     public static void styleScrollBar(JScrollPane scrollPane) {
