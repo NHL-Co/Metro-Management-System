@@ -66,8 +66,26 @@ public class VendorModel {
     }
 
     public boolean updateVendor(Vendor vendor) {
-        String query = "UPDATE vendor SET name = ?, cnic = ?, phone_number = ? WHERE vendor_id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+        // First, check if the CNIC already exists in the database for another vendor
+        String checkQuery = "SELECT COUNT(*) FROM vendor WHERE cnic = ? AND vendor_id != ?";
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+            checkStmt.setString(1, vendor.getCnic());
+            checkStmt.setInt(2, vendor.getVendorId()); // Ensure it's not checking for the current vendor
+
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                // If another vendor with the same CNIC exists, prevent the update
+                MessageDialog.showFail("A vendor with this CNIC already exists");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // If CNIC check passes, proceed with the update
+        String updateQuery = "UPDATE vendor SET name = ?, cnic = ?, phone_number = ? WHERE vendor_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
             pstmt.setString(1, vendor.getName());
             pstmt.setString(2, vendor.getCnic());
             pstmt.setString(3, vendor.getPhoneNumber());
