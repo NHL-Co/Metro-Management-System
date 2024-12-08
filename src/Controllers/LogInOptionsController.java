@@ -32,6 +32,12 @@ public class LogInOptionsController {
             }
         });
 
+        logInOptionsView.getExitButton().addActionListener(e -> {
+            MessageDialog.showConfirmation("Are you sure you want to exit?",
+                    () -> {System.exit(0);},
+                    () -> {});
+        });
+
     }
     
     public static void superAdminLogin() {
