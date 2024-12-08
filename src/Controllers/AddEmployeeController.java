@@ -17,12 +17,6 @@ public class AddEmployeeController {
     private char empType;
     private Employee emp;
 
-    /**
-     * Generic Add Employee Controller
-     *
-     * @param empModel EmployeeModel object
-     * @param empType  Employee Type ('B' for Branch Manager, 'C' for Cashier, 'D' for Data Entry Operator)
-     */
     public AddEmployeeController(Employee emp, EmployeeModel empModel, ReportModel reportModel, char empType) {
         this.emp = emp;
         this.empModel = empModel;
@@ -56,7 +50,12 @@ public class AddEmployeeController {
             String name = addEmployeeView.getNameField().getText();
             String email = addEmployeeView.getEmail().getText();
             String password = "123456"; // Default password
-            String branchCode = addEmployeeView.getSelectedBranchCode();
+            if(emp == null){
+                branchCode = addEmployeeView.getSelectedBranchCode();
+            }
+            else{
+                branchCode = emp.getBranchCode();
+            }
             String empTypeString = String.valueOf(empType); // Convert char to String
             double salary = Double.parseDouble(addEmployeeView.getSalary().getText());
 
