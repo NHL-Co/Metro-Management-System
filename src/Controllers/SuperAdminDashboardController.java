@@ -3,20 +3,16 @@ package Controllers;
 import Models.BranchModel;
 import Models.EmployeeModel;
 import Views.SuperAdminView;
-import Views.ViewBranchManagersView;
+import Views.ViewEmployeesView;
 
 public class SuperAdminDashboardController {
     private BranchModel branchModel;
     private EmployeeModel empModel;
     private SuperAdminView spaView;
-    private ViewBranchManagersView viewBranchManagersView;
 
     public SuperAdminDashboardController(EmployeeModel empModel) {
         this.branchModel = new BranchModel();
         this.empModel = empModel;
-
-        this.viewBranchManagersView = new ViewBranchManagersView(empModel);
-        viewBranchManagersView.setVisible(false);
 
         this.spaView = new SuperAdminView();
         addListeners();
@@ -28,11 +24,11 @@ public class SuperAdminDashboardController {
             spaView.dispose();
         });
         spaView.getAddBMBtn().addActionListener(e -> {
-            new AddBranchManagerController(empModel);
+            new AddEmployeeController(null, empModel, 'B');
             spaView.dispose();
         });
         spaView.getViewBMBtn().addActionListener(e -> {
-            viewBranchManagersView.setVisible(true);
+            new ViewEmployeesView(null, empModel, 'B');
             spaView.dispose();
         });
     }

@@ -1,48 +1,58 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controllers;
 
 import Models.EmployeeModel;
+import Views.BranchMgrView;
+import Views.ViewEmployeesView;
 import utilities.Employee;
 import utilities.InputValidation;
 import utilities.MessageDialog;
 
-/**
- *
- * @author laiba
- */
 public class BranchMgrDashboardController {
     private Employee branchMgr;
     private EmployeeModel empModel;
-    // branch mgr view
+    private BranchMgrView view;
 
     public BranchMgrDashboardController(Employee branchMgr, EmployeeModel empModel) {
         this.branchMgr = branchMgr;
         this.empModel = empModel;
+        this.view = new BranchMgrView(branchMgr);
         if(branchMgr.getPassword().equals("123456"))
         {
-            // show changePwd form
+            new ChangePasswordController(view, branchMgr, empModel, true);
         }
+        addListeners();
+    }
+
+    public void addListeners(){
+        view.getAddCashier().addActionListener(e -> {
+            new AddEmployeeController(branchMgr, empModel, 'C');
+            view.dispose();
+        });
+
+        view.getAddDeo().addActionListener(e -> {
+            new AddEmployeeController(branchMgr, empModel, 'D');
+            view.dispose();
+        });
+
+        view.getViewCashier().addActionListener(e -> {
+            new ViewEmployeesView(branchMgr, empModel, 'C');
+            view.dispose();
+        });
+
+        view.getViewDeo().addActionListener(e -> {
+            new ViewEmployeesView(branchMgr, empModel, 'D');
+            view.dispose();
+        });
+
+        view.getChangePwd().addActionListener(e -> {
+            new ChangePasswordController(view, branchMgr, empModel, false);
+        });
+
     }
     
     public void changePwd()
     {
-        String oldPwd = "", newPwd = "";
-        if(oldPwd.equals(branchMgr.getPassword()))
-        {
-            branchMgr.setPassword(newPwd);
-            if(empModel.updateEmployee(branchMgr))
-            {
-            MessageDialog.showSuccess("Password changed successfully!");
-            }
-            else
-            {
-                MessageDialog.showFail("Could not change password!");
-            }
-        }
+        new ChangePasswordController(view, branchMgr, empModel, true);
     }
     
     public void addCashier()
