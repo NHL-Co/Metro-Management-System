@@ -1,81 +1,43 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controllers;
 
 import Models.BranchModel;
 import Models.EmployeeModel;
-import javax.swing.JOptionPane;
-import utilities.Branch;
-import utilities.Employee;
-import utilities.InputValidation;
-import utilities.MessageDialog;
-import utilities.InputValidation;
+import Views.SuperAdminView;
+import Views.ViewBranchManagersView;
 
-/**
- *
- * @author laiba
- */
 public class SuperAdminDashboardController {
-    private String adminUsername;
     private BranchModel branchModel;
     private EmployeeModel empModel;
-    // SuperAdminDashboard spaView;
-    // CreateBranchForm createBranchView;
-    // CreateBranchMgrForm createBranchMgrView;
-    // SuperAdminReports reportsView;
+    private SuperAdminView spaView;
+    private ViewBranchManagersView viewBranchManagersView;
 
-    public SuperAdminDashboardController(String adminUsername, EmployeeModel empModel) {
-        this.adminUsername = adminUsername;
+    public SuperAdminDashboardController(EmployeeModel empModel) {
         this.branchModel = new BranchModel();
         this.empModel = empModel;
-        // init views and
-        // set all action listeners
+
+        this.viewBranchManagersView = new ViewBranchManagersView(empModel);
+        viewBranchManagersView.setVisible(false);
+
+        this.spaView = new SuperAdminView();
+        addListeners();
     }
-    
-    public void createBranch()
-    {
-        String branchCode = "", city = "", address = "", phone = "";
-        int nEmp = 0;
-        if(InputValidation.validateBranchCode(branchCode) && InputValidation.validatePhone(phone))
-        {
-            Branch branch = new Branch(branchCode, city, address, phone, nEmp);
-            if(branchModel.addBranch(branch))
-            {
-                MessageDialog.showSuccess("Branch created successfully!");
-            }
-            else
-            {
-                MessageDialog.showFail("Could not create branch!");
-            }
-        }
-        
+
+    private void addListeners() {
+        spaView.getCreateBranchBtn().addActionListener(e -> {
+            new CreateBranchController(empModel, branchModel);
+            spaView.dispose();
+        });
+        spaView.getAddBMBtn().addActionListener(e -> {
+            new AddBranchManagerController(empModel);
+            spaView.dispose();
+        });
+        spaView.getViewBMBtn().addActionListener(e -> {
+            viewBranchManagersView.setVisible(true);
+            spaView.dispose();
+        });
     }
-    
-    public void createBranchMgr()
-    {
-        String name = "", email = "", password = "123456", branchcode = "", emptype = "B";
-        double salary = 0;
-        if(InputValidation.validateEmail(email) && InputValidation.validateEmail(email))
-        {
-            Employee branchMgr = new Employee(0, name, email, password, branchcode, salary, emptype);
-            if(empModel.addEmployee(branchMgr))
-            {
-                MessageDialog.showSuccess("Branch manager created successfully!");
-            }
-            else
-            {
-                MessageDialog.showFail("Could not create branch manager!");
-            }
-        }
-        
-    }
-    
     public void seeReports()
     {
         //Show reports screen
     }
-   
 }
