@@ -50,6 +50,10 @@ public class BranchMgrDashboardController {
         view.getChangePwd().addActionListener(e -> {
             new ChangePasswordController(view, branchMgr, empModel, false);
         });
+        
+                view.getGenerateReport().addActionListener(e -> {
+            new GenerateReportController(branchMgr, empModel);
+        });
 
     }
     
