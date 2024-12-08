@@ -95,8 +95,9 @@ public class SplashWindowView extends JFrame {
             }
         }
         bar.setString("Done...");
-        dispose();
+   
         new LogInOptionsController();
+        dispose();
     }
 }
 
