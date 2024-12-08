@@ -4,10 +4,15 @@ import Models.ProductModel;
 import Models.VendorModel;
 import utilities.*;
 
+import java.util.ArrayList;
 import java.util.List; // Ensure this import is correct  // Import the Product model
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 
 public class DEODashboardView extends JFrame {
@@ -42,6 +47,9 @@ public class DEODashboardView extends JFrame {
     private DefaultTableModel tableModel;
     private JButton deleteButton;
     private JButton updateButton;
+    private JTextField searchField1;
+    private JTextField searchField2; // Declare the search field at the class level
+
 
     private JPanel viewVendorsPanel; // Panel for viewing vendors
     private JTable vendorTable; // Table to display vendors
@@ -105,8 +113,6 @@ public class DEODashboardView extends JFrame {
         // Add the vertical panel to the center of the layout
         add(mainPanel,BorderLayout.CENTER);
     }
-
-
 
     private JPanel createCenterPanel() {
         JPanel centerPanel = new JPanel(new GridBagLayout());
@@ -211,9 +217,6 @@ public class DEODashboardView extends JFrame {
         cl.show(mainPanel, "CenterPanel");
     }
 
-
-    // Declare productCategoryComboBox
-
     private void createProductPanel() {
         productPanel = new JPanel(new GridBagLayout());
 
@@ -304,6 +307,7 @@ public class DEODashboardView extends JFrame {
     private void setComboBoxPreferredSize(JComboBox<String> comboBox) {
         comboBox.setPreferredSize(new Dimension(200, 30)); // Set the same size for both combo boxes
     }
+
     private void populateCategoryComboBox() {
         categories = new String[]{
                 "Fruits", "Vegetables", "Appliances", "Poultry", "Meat", "Dairy", "Bakery",
@@ -320,70 +324,243 @@ public class DEODashboardView extends JFrame {
     }
 
 
+    // Create a view panel for Vendors
     private void createViewVendorsPanel() {
-        // Create the main panel for vendors
         viewVendorsPanel = new JPanel(new BorderLayout());
         viewVendorsPanel.setBackground(Color.WHITE);
 
-        // Create a DefaultTableModel for the vendor data
+        // Create a search field panel with a centered layout
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
+        JLabel searchLbl = new JLabel("Search Vendor: ");
+        searchLbl.setFont(new Font("Arial", Font.BOLD, 14));
+
+        searchField1 = new JTextField(30);
+        searchField1.setFont(Styling.bodyFont);
+        searchField1.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(ColorPalette.BLUE, 2),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        searchField1.setBackground(Color.WHITE);
+        searchField1.setForeground(Color.BLACK);
+        searchField1.setCaretColor(Color.PINK);
+
+        searchPanel.add(searchLbl);
+        searchPanel.add(searchField1);
+        viewVendorsPanel.add(searchPanel, BorderLayout.NORTH);
+
+        // Create vendor table
         vendorTableModel = new DefaultTableModel(new Object[]{
                 "Vendor ID", "Name", "CNIC", "Phone Number"
         }, 0);
         vendorTable = new JTable(vendorTableModel);
         vendorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        vendorTable.setDefaultEditor(Object.class, null); // Make cells non-editable
+        vendorTable.setDefaultEditor(Object.class, null);
 
-        // Set custom styling for the table
-        vendorTable.setFont(Styling.bodyFont); // Set body font for table text
-        vendorTable.setRowHeight(40); // Increase row height for better visibility
-        vendorTable.getTableHeader().setFont(Styling.headingFont); // Set font for table header
-        vendorTable.getTableHeader().setBackground(ColorPalette.BLUE); // Set header background color
-        vendorTable.getTableHeader().setForeground(Color.WHITE); // Set header text color
-        vendorTable.setGridColor(ColorPalette.LIGHT_GREY); // Set grid line color
-        vendorTable.setIntercellSpacing(new Dimension(10, 10)); // Add spacing between cells
-        vendorTable.setSelectionBackground(new Color(230, 230, 255)); // Set selection background color
+        // Table styling
+        vendorTable.setFont(Styling.bodyFont);
+        vendorTable.setRowHeight(40);
+        vendorTable.getTableHeader().setFont(Styling.headingFont);
+        vendorTable.getTableHeader().setBackground(ColorPalette.BLUE);
+        vendorTable.getTableHeader().setForeground(Color.WHITE);
+        vendorTable.setGridColor(ColorPalette.LIGHT_GREY);
+        vendorTable.setIntercellSpacing(new Dimension(10, 10));
+        vendorTable.setSelectionBackground(new Color(230, 230, 255));
 
-        // Customize column widths for better alignment
-        vendorTable.getColumnModel().getColumn(0).setPreferredWidth(100); // Vendor ID
-        vendorTable.getColumnModel().getColumn(1).setPreferredWidth(200); // Name
-        vendorTable.getColumnModel().getColumn(2).setPreferredWidth(200); // CNIC
-        vendorTable.getColumnModel().getColumn(3).setPreferredWidth(150); // Phone Number
-
-        // Add the table inside a JScrollPane
         JScrollPane scrollPane = new JScrollPane(vendorTable);
-        scrollPane.setPreferredSize(new Dimension(800, 400)); // Set preferred size for the scroll pane
+        scrollPane.setPreferredSize(new Dimension(800, 400));
         viewVendorsPanel.add(scrollPane, BorderLayout.CENTER);
 
+        // Add real-time filtering
+        searchField1.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterVendorTable();
+            }
 
-        // Create a panel for buttons at the bottom
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10)); // Center the buttons with spacing
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterVendorTable();
+            }
 
-        // Create buttons and apply styling
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterVendorTable();
+            }
+        });
+
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         deleteButton = new JButton("Delete Vendor");
         updateButton = new JButton("Update Vendor");
         JButton backButton = new JButton("Back");
 
-        // Apply button styling from Styling utility class
         Styling.setButton(deleteButton);
         Styling.setButton(updateButton);
         Styling.setButton(backButton);
-        backButton.addActionListener(e -> showMainPanel());
 
+        deleteButton.addActionListener(e -> deleteSelectedVendor());
         updateButton.addActionListener(e -> updateSelectedVendor());
-        deleteButton.addActionListener(e ->deleteSelectedVendor());
         backButton.addActionListener(e -> showMainPanel());
 
-        // Add buttons to the panel
         buttonPanel.add(deleteButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(backButton);
-
-        // Add the button panel to the main view panel
         viewVendorsPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Load vendor data into the table
         loadVendorData();
+    }
+
+    // Custom filtering for the vendor table
+    private void filterVendorTable() {
+        List<Vendor> vendors = new ArrayList<>();
+        vendors = vendorModel.getAllVendors();
+        String filterText = searchField1.getText().toLowerCase();
+        vendorTableModel.setRowCount(0); // Clear the table model
+
+        for (Vendor vendor : vendors) {
+            boolean matches = vendor.getName().toLowerCase().contains(filterText) ||
+                    vendor.getCnic().toLowerCase().contains(filterText) ||
+                    vendor.getPhoneNumber().toLowerCase().contains(filterText);
+
+            if (matches) {
+                Object[] row = {vendor.getVendorId(), vendor.getName(), vendor.getCnic(), vendor.getPhoneNumber()};
+                vendorTableModel.addRow(row);
+            }
+        }
+    }
+
+
+    private void createViewProductsPanel() {
+        viewProductsPanel = new JPanel(new BorderLayout());
+        viewProductsPanel.setBackground(Color.WHITE);
+
+        // Create a search field panel with a centered layout
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
+        JLabel searchLbl = new JLabel("Search Product: ");
+        searchLbl.setFont(new Font("Arial", Font.BOLD, 14));
+
+        searchField2 = new JTextField(30);
+        searchField2.setFont(Styling.bodyFont);
+        searchField2.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(ColorPalette.BLUE, 2),
+                BorderFactory.createEmptyBorder(5, 15, 5, 15)
+        ));
+        searchField2.setBackground(Color.WHITE);
+        searchField2.setForeground(Color.BLACK);
+        searchField2.setCaretColor(Color.PINK);
+
+        searchPanel.add(searchLbl);
+        searchPanel.add(searchField2);
+        viewProductsPanel.add(searchPanel, BorderLayout.NORTH);
+
+        // Create product table
+        tableModel = new DefaultTableModel(new Object[]{
+                "Product ID", "Vendor ID", "Name", "Category", "Original Price", "Sale Price", "Carton Price"
+        }, 0);
+        productTable = new JTable(tableModel);
+        productTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        productTable.setDefaultEditor(Object.class, null);
+
+        // Table styling
+        productTable.setFont(Styling.bodyFont);
+        productTable.setRowHeight(40);
+        productTable.getTableHeader().setFont(Styling.headingFont);
+        productTable.getTableHeader().setBackground(ColorPalette.BLUE);
+        productTable.getTableHeader().setForeground(Color.WHITE);
+        productTable.setGridColor(ColorPalette.LIGHT_GREY);
+        productTable.setIntercellSpacing(new Dimension(10, 10));
+        productTable.setSelectionBackground(new Color(230, 230, 255));
+
+        JScrollPane scrollPane = new JScrollPane(productTable);
+        scrollPane.setPreferredSize(new Dimension(800, 400));
+        viewProductsPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Add real-time filtering
+        searchField2.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterProductTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterProductTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterProductTable();
+            }
+        });
+
+        // Button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        deleteButton = new JButton("Delete Product");
+        updateButton = new JButton("Update Product");
+        JButton backButton = new JButton("Back");
+
+        Styling.setButton(deleteButton);
+        Styling.setButton(updateButton);
+        Styling.setButton(backButton);
+
+        deleteButton.addActionListener(e -> deleteSelectedProduct());
+        updateButton.addActionListener(e -> updateSelectedProduct());
+        backButton.addActionListener(e -> showMainPanel());
+
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(backButton);
+        viewProductsPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        loadProductData();
+    }
+
+    // Custom filtering for the product table
+    private void filterProductTable() {
+        // Collection to store Vendor objects
+
+
+// Collection to store Product objects
+        List<Product> products = new ArrayList<>();
+        products = productModel.getAllProducts();
+        String filterText = searchField2.getText().toLowerCase();
+        tableModel.setRowCount(0); // Clear the table model
+
+        for (Product product : products) {
+            boolean matches = product.getName().toLowerCase().contains(filterText) ||
+                    product.getCategory().toLowerCase().contains(filterText) ||
+                    String.valueOf(product.getOriginalPrice()).contains(filterText) ||
+                    String.valueOf(product.getSalePrice()).contains(filterText) ||
+                    String.valueOf(product.getPriceByCarton()).contains(filterText);
+
+            if (matches) {
+                Object[] row = {
+                        product.getProductId(), product.getVendorId(), product.getName(), product.getCategory(),
+                        product.getOriginalPrice(), product.getSalePrice(), product.getPriceByCarton()
+                };
+                tableModel.addRow(row);
+            }
+        }
+    }
+
+
+
+    public void loadProductData() {
+        tableModel.setRowCount(0); // Clear the table
+        List<Product> products = productModel.searchProduct(""); // Load all products
+        for (Product product : products) {
+            tableModel.addRow(new Object[]{
+                    product.getProductId(),
+                    product.getVendorId(),
+                    product.getName(),
+                    product.getCategory(),
+                    product.getOriginalPrice(),
+                    product.getSalePrice(),
+                    product.getPriceByCarton()
+            });
+        }
     }
 
     public void loadVendorData() {
@@ -412,8 +589,6 @@ public class DEODashboardView extends JFrame {
             MessageDialog.showFail("Please select a vendor to delete.");
         }
     }
-
-
 
     private void updateSelectedVendor() {
         int selectedRow = vendorTable.getSelectedRow();
@@ -480,93 +655,6 @@ public class DEODashboardView extends JFrame {
             }
         } else {
             MessageDialog.showFail("Please select a vendor to update.");
-        }
-    }
-
-
-
-
-    private void createViewProductsPanel() {
-        // Create main panel with BorderLayout
-        viewProductsPanel = new JPanel(new BorderLayout());
-        viewProductsPanel.setBackground(Color.WHITE);
-
-        // Create a DefaultTableModel for the product data
-        tableModel = new DefaultTableModel(new Object[]{
-                "Product ID", "Vendor ID", "Name", "Category", "Original Price", "Sale Price", "Carton Price"
-        }, 0);
-        productTable = new JTable(tableModel);
-        productTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        productTable.setDefaultEditor(Object.class, null); // Make cells non-editable
-
-        // Set custom styling for the table
-        productTable.setFont(Styling.bodyFont); // Set body font for table text
-        productTable.setRowHeight(40); // Increase row height for better visibility
-        productTable.getTableHeader().setFont(Styling.headingFont); // Set font for table header
-        productTable.getTableHeader().setBackground(ColorPalette.BLUE); // Set header background color
-        productTable.getTableHeader().setForeground(Color.WHITE); // Set header text color
-        productTable.setGridColor(ColorPalette.LIGHT_GREY); // Set grid line color
-        productTable.setIntercellSpacing(new Dimension(10, 10)); // Add spacing between cells
-        productTable.setSelectionBackground(new Color(230, 230, 255)); // Set selection background color
-
-        // Customize column widths for better alignment
-        productTable.getColumnModel().getColumn(0).setPreferredWidth(100); // Product ID
-        productTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Vendor ID
-        productTable.getColumnModel().getColumn(2).setPreferredWidth(200); // Name
-        productTable.getColumnModel().getColumn(3).setPreferredWidth(150); // Category
-        productTable.getColumnModel().getColumn(4).setPreferredWidth(150); // Original Price
-        productTable.getColumnModel().getColumn(5).setPreferredWidth(150); // Sale Price
-        productTable.getColumnModel().getColumn(6).setPreferredWidth(150); // Carton Price
-
-        // Add the table inside a JScrollPane
-        JScrollPane scrollPane = new JScrollPane(productTable);
-        scrollPane.setPreferredSize(new Dimension(800, 400)); // Set preferred size for the scroll pane
-        viewProductsPanel.add(scrollPane, BorderLayout.CENTER);
-
-        // Create a panel for buttons at the bottom
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10)); // Center the buttons with spacing
-
-        // Create buttons and apply styling
-        deleteButton = new JButton("Delete Product");
-        updateButton = new JButton("Update Product");
-        JButton backButton = new JButton("Back");
-
-        // Apply button styling from Styling utility class
-        Styling.setButton(deleteButton);
-        Styling.setButton(updateButton);
-        Styling.setButton(backButton);
-
-        // Add action listeners for buttons
-        deleteButton.addActionListener(e -> deleteSelectedProduct());
-        updateButton.addActionListener(e -> updateSelectedProduct());
-        backButton.addActionListener(e -> showMainPanel());
-
-        // Add buttons to the panel
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(updateButton);
-        buttonPanel.add(backButton);
-
-        // Add the button panel to the main view panel
-        viewProductsPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        // Load product data into the table
-        loadProductData();
-    }
-
-    public void loadProductData() {
-        tableModel.setRowCount(0); // Clear the table
-        List<Product> products = productModel.searchProduct(""); // Load all products
-        for (Product product : products) {
-            tableModel.addRow(new Object[]{
-                    product.getProductId(),
-                    product.getVendorId(),
-                    product.getName(),
-                    product.getCategory(),
-                    product.getOriginalPrice(),
-                    product.getSalePrice(),
-                    product.getPriceByCarton()
-            });
         }
     }
 
