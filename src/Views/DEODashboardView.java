@@ -1,6 +1,8 @@
 
 package Views;
 
+import Controllers.ChangePasswordController;
+import Models.EmployeeModel;
 import Models.ProductModel;
 import Models.VendorModel;
 import utilities.*;
@@ -12,13 +14,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 
 public class DEODashboardView extends JFrame {
     private RoundedButton vendorButton;
     private RoundedButton productButton;
+    private RoundedButton ChngPwButton;
 
     private JButton addVendorButton;
     private JButton saveProductButton;
@@ -85,7 +86,7 @@ public class DEODashboardView extends JFrame {
 
         // Initialize the main panel
         mainPanel = new JPanel(new CardLayout());
-        JPanel centerPanel = createCenterPanel();
+        JPanel centerPanel = createCenterPanel(employee);
         contentPanel = new JPanel(new CardLayout());
 
         // Create the panels for vendors and products
@@ -115,7 +116,7 @@ public class DEODashboardView extends JFrame {
         add(mainPanel,BorderLayout.CENTER);
     }
 
-    private JPanel createCenterPanel() {
+    private JPanel createCenterPanel(Employee employee) {
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setBackground(Color.WHITE);
 
@@ -124,16 +125,19 @@ public class DEODashboardView extends JFrame {
         RoundedButton viewProductsButton = new RoundedButton("View Products", 30); // New button
         // New button for viewing products
         RoundedButton viewVendorsButton = new RoundedButton(("View Vendors"), 30);
+        ChngPwButton = new RoundedButton("Change Password",30);
 
         vendorButton.setIcon(new ImageIcon("src/Images/vendor.png"));
         productButton.setIcon(new ImageIcon("src/Images/cart.png"));
         viewProductsButton.setIcon(new ImageIcon("src/Images/product.png")); // Placeholder icon
         viewVendorsButton.setIcon(new ImageIcon("src/Images/ViewVendors.png"));
+        ChngPwButton.setIcon(new ImageIcon("src/Images/change_pwd_small.png"));
 
         Styling.setBigButton(vendorButton);
         Styling.setBigButton(productButton);
         Styling.setBigButton(viewProductsButton);
         Styling.setBigButton(viewVendorsButton);
+        Styling.setBigButton(ChngPwButton);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10);
@@ -150,10 +154,18 @@ public class DEODashboardView extends JFrame {
         gbc.gridx = 3; gbc.gridy = 0;
         centerPanel.add(viewProductsButton, gbc); // Adding the new button
 
+        gbc.gridx = 0; gbc.gridy = 1;
+        centerPanel.add(ChngPwButton, gbc);
+
         vendorButton.addActionListener(e -> showPanel("VendorPanel"));
         productButton.addActionListener(e -> showPanel("ProductPanel"));
         viewProductsButton.addActionListener(e -> showPanel("ViewProductsPanel")); // Action for new button
         viewVendorsButton.addActionListener(e -> showPanel("ViewVendorsPanel"));
+        ChngPwButton.addActionListener((e -> {
+             EmployeeModel EmpModel = new EmployeeModel();
+            new ChangePasswordController(this,employee,EmpModel,false);
+            this.setVisible(false);
+        }));
 
         return centerPanel;
     }
