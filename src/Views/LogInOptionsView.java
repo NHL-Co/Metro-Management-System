@@ -154,6 +154,7 @@ public class LogInOptionsView extends JFrame {
         radioButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 radioButton.setBackground(new Color(230, 230, 255));
+            }
                 
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 radioButton.setBackground(Color.white); 
