@@ -386,7 +386,7 @@ public class DEODashboardView extends JFrame {
         loadVendorData();
     }
 
-    private void loadVendorData() {
+    public void loadVendorData() {
         List<Vendor> vendors = vendorModel.getAllVendors();
         // Update table model with the list of vendors
         DefaultTableModel tableModel = (DefaultTableModel) vendorTable.getModel();
