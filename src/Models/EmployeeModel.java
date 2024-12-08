@@ -130,5 +130,30 @@ public class EmployeeModel {
         return employees;
     }
 
+    public List<Employee> getBranchEmployees(String empType, String branchCode) {
+        List<Employee> employees = new ArrayList<>();
+        String query = "SELECT * FROM employees WHERE emp_type = ? AND branch_code = ?";  // Placeholder for emp_type
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, empType); // Set the empType parameter
+            pstmt.setString(2, branchCode); // Set the empType parameter
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Employee employee = new Employee(
+                        rs.getInt("emp_no"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("branch_code"),
+                        rs.getDouble("salary"),
+                        rs.getString("emp_type")
+                );
+                employees.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
 }
 
