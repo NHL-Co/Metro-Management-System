@@ -1,3 +1,4 @@
+
 package Views;
 
 import Controllers.LogInOptionsController;
@@ -95,7 +96,6 @@ public class SplashWindowView extends JFrame {
             }
         }
         bar.setString("Done...");
-   
         new LogInOptionsController();
         dispose();
     }
