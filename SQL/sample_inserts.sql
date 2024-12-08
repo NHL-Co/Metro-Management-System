@@ -17,12 +17,15 @@ INSERT INTO `product` (`product_id`, `vendor_id`, `name`, `category`, `original_
 
 -- Data insertion for `product_branch` table
 INSERT INTO `product_branch` (`product_id`, `branch_code`, `quantity`) VALUES
-(1, '123LHE', 100),
-(2, '123LHE', 70),
-(3, '123LHE', 100),
-(4, '123LHE', 50),
-(5, '123LHE', 100),
-(6, '123LHE', 100),
-(7, '123LHE', 100),
-(8, '123LHE', 200),
-(9, '123LHE', 50);
+(1, '001LHR', 100),
+(2, '001LHR', 70),
+(3, '001LHR', 100),
+(4, '001LHR', 50),
+(5, '001LHR', 100),
+(6, '001LHR', 100),
+(7, '001LHR', 100),
+(8, '001LHR', 200),
+(9, '001LHR', 50);
+
+INSERT INTO `employees` (`name`, `email`, `password`, `branch_code`, `emp_type`, `salary`) VALUES
+('Laiba', 'laiba@gmail.com', '123456', '001LHR', 'C', 50000);
