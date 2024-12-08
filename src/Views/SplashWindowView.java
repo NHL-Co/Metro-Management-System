@@ -21,7 +21,7 @@ public class SplashWindowView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen window
         setSize(500, 500);
-        getContentPane().setBackground(ColorPalette.LIGHT_GREY);
+        getContentPane().setBackground(ColorPalette.BLUE);
         setLocationRelativeTo(null);
         init();
     }
@@ -40,7 +40,7 @@ public class SplashWindowView extends JFrame {
         bar.setPreferredSize(new Dimension(500, 50));
         bar.setUI(new ModernProgressBarUI());
         bar.setForeground(ColorPalette.BLUE);
-        bar.setBackground(ColorPalette.LIGHT_GREY);
+        bar.setBackground(ColorPalette.BLUE);
 
         // Text below the progress bar
         JLabel metroText = new JLabel("METRO MANAGEMENT SYSTEM ™");
@@ -55,7 +55,7 @@ public class SplashWindowView extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2d.setColor(ColorPalette.LIGHT_GREY);
+                g2d.setColor(ColorPalette.BLUE);
                 g2d.fillRoundRect(10, 10, getWidth() - 20, getHeight() - 20, 30, 30);
             }
         };
@@ -79,6 +79,9 @@ public class SplashWindowView extends JFrame {
         // Fill Progress Bar
         fillProgressBar();
     }
+
+
+
 
     private void fillProgressBar() {
         for (int i = 0; i <= 100; i++) {
