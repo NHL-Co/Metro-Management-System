@@ -94,7 +94,7 @@ public class ProductModel {
         }
         return productList;
     }
-    
+
     public Product getProduct(int id)
     {
         String query = "SELECT * FROM product WHERE product_id = ?";
@@ -103,8 +103,8 @@ public class ProductModel {
             ResultSet rs = pstmt.executeQuery();
             if(rs.next())
             {
-                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"), 
-                        rs.getString("name"),rs.getString("category"), rs.getDouble("original_price"), 
+                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"),
+                        rs.getString("name"),rs.getString("category"), rs.getDouble("original_price"),
                         rs.getDouble("sale_price"), rs.getDouble("price_by_carton"));
                 return product;
             }
@@ -112,25 +112,6 @@ public class ProductModel {
             e.printStackTrace();
         }
         return null;
-    }
-    
-    public ArrayList<Product> getProducts()
-    {
-        ArrayList<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM product";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            ResultSet rs = pstmt.executeQuery();
-            while(rs.next())
-            {
-                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"), 
-                        rs.getString("name"),rs.getString("category"), rs.getDouble("original_price"), 
-                        rs.getDouble("sale_price"), rs.getDouble("price_by_carton"));
-                products.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return products;
     }
 }
 

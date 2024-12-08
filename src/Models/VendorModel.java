@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utilities.*;
+
 public class VendorModel {
-    private final Connection conn = DBConnection.getInstance().getConnection();
+    private static final Connection conn = DBConnection.getInstance().getConnection();
 
     public void createTable() {
         String query = "CREATE TABLE IF NOT EXISTS vendor (" +
@@ -21,11 +22,56 @@ public class VendorModel {
     }
 
     public boolean addVendor(Vendor vendor) {
-        String query = "INSERT INTO vendor (name, cnic, phone_number) VALUES (?, ?, ?)";
+        // Check if vendor with the same CNIC already exists
+        String checkQuery = "SELECT COUNT(*) FROM vendor WHERE cnic = ?";
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+            checkStmt.setString(1, vendor.getCnic());
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                // CNIC already exists in the database, show error message
+               MessageDialog.showFail("Vendor with this CNIC Already Exists");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Proceed to insert the new vendor if CNIC is unique
+        String insertQuery = "INSERT INTO vendor (name, cnic, phone_number) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
+            pstmt.setString(1, vendor.getName());
+            pstmt.setString(2, vendor.getCnic());
+            pstmt.setString(3, vendor.getPhoneNumber());
+            return pstmt.executeUpdate() > 0; // Return true if insertion was successful
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
+    public boolean deleteVendor(int vendorId) {
+        String query = "DELETE FROM vendor WHERE vendor_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, vendorId);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateVendor(Vendor vendor) {
+        String query = "UPDATE vendor SET name = ?, cnic = ?, phone_number = ? WHERE vendor_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, vendor.getName());
             pstmt.setString(2, vendor.getCnic());
             pstmt.setString(3, vendor.getPhoneNumber());
+            pstmt.setInt(4, vendor.getVendorId());
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,29 +80,25 @@ public class VendorModel {
     }
 
 
-
-    public void deleteVendor(int vendorId) {
-        String query = "DELETE FROM vendor WHERE vendor_id = ?";
+    public Vendor getVendor(int vendorId) {
+        String query = "SELECT * FROM vendor WHERE vendor_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, vendorId);
-            pstmt.executeUpdate();
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new Vendor(
+                        rs.getInt("vendor_id"),
+                        rs.getString("name"),
+                        rs.getString("cnic"),
+                        rs.getString("phone_number")
+                );
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;  // Vendor not found
     }
 
-    public void updateVendor(Vendor vendor) {
-        String query = "UPDATE vendor SET name = ?, cnic = ?, phone_number = ? WHERE vendor_id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, vendor.getName());
-            pstmt.setString(2, vendor.getCnic());
-            pstmt.setString(3, vendor.getPhoneNumber());
-            pstmt.setInt(4, vendor.getVendorId());
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     public List<Vendor> searchVendor(String name) {
         ArrayList<Vendor> vendorList = new ArrayList<>();
@@ -79,7 +121,7 @@ public class VendorModel {
     }
 
     // New Method: Fetch Vendor Names
-    public String[] getVendorNames() {
+    public static String[] getVendorNames() {
         List<String> vendorNames = new ArrayList<>();
         String query = "SELECT name FROM vendor";
         try (Statement stmt = conn.createStatement();
@@ -92,6 +134,31 @@ public class VendorModel {
         }
         return vendorNames.toArray(new String[0]);
     }
+
+    public List<Vendor> getAllVendors() {
+        List<Vendor> vendorList = new ArrayList<>();
+        String query = "SELECT * FROM vendor";
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            // Process each record and create Vendor objects
+            while (rs.next()) {
+                Vendor vendor = new Vendor(
+                        rs.getInt("vendor_id"),
+                        rs.getString("name"),
+                        rs.getString("cnic"),
+                        rs.getString("phone_number")
+                );
+                vendorList.add(vendor);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vendorList;
+    }
+
+
 
     public int getVendorIdByName(String vendorName) {
         String query = "SELECT vendor_id FROM vendor WHERE name = ?";
