@@ -33,7 +33,9 @@ public class SuperAdminView extends JFrame {
 
         //add Dashboard
         JPanel dashboardPanel = new JPanel();
-        Styling.setDashboard(this, dashboardPanel, d, "Super Admin Dashboard");
+        Styling.setDashboard(this, dashboardPanel, d, "Super Admin Dashboard", "Super Admin");
+        Styling.footer(this);
+
 
         JPanel optionsPanel = new JPanel();
         optionsPanel.setLayout(new GridBagLayout());

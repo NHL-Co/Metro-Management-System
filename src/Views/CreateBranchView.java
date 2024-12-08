@@ -37,7 +37,7 @@ public class CreateBranchView extends JFrame {
 
         // Add Dashboard
         JPanel dashboardPanel = new JPanel();
-        Styling.setDashboard(this, dashboardPanel, d, "Super Admin - Create Branch");
+        Styling.setDashboard(this, dashboardPanel, d, "Super Admin - Create Branch", "Super Admin");
         add(dashboardPanel, BorderLayout.NORTH);
 
         // Create Branch Form
@@ -83,7 +83,7 @@ public class CreateBranchView extends JFrame {
         Styling.setTextField(phoneField);
         formPanel.add(phoneField, gbc);
 
-        // Buttons
+        // Button Panel (above footer)
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.WHITE);
         saveButton = new JButton("Save");
@@ -100,12 +100,25 @@ public class CreateBranchView extends JFrame {
             dispose();
         });
 
-        // Add formPanel and buttonPanel to main layout
+        // Footer Panel
+        JPanel footerPanel = new JPanel(new BorderLayout());
+        footerPanel.setBackground(Color.WHITE);
+        footerPanel.setPreferredSize(new Dimension(d.width, 50));
+        footerPanel.add(Styling.footer(this), BorderLayout.SOUTH);
+
+        // Main Bottom Panel (button panel + footer)
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(Color.WHITE);
+        bottomPanel.add(buttonPanel, BorderLayout.NORTH);
+        bottomPanel.add(footerPanel, BorderLayout.SOUTH);
+
+        // Add formPanel and bottomPanel to main layout
         add(formPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
+
 
     private String[] getPakistaniCities() {
         return new String[]{"Karachi", "Lahore", "Islamabad", "Rawalpindi", "Peshawar", "Quetta", "Faisalabad", "Multan", "Sialkot", "Hyderabad"};
