@@ -9,10 +9,10 @@ public class Report {
     private LocalDate startDate;
     private LocalDate endDate;
     private double sales;
-    private int remainingStock;
+    private String remainingStock;
     private double profit;
 
-    public Report(int reportId, String branchCode, String rangeTag, LocalDate startDate, LocalDate endDate, double sales, int remainingStock, double profit) {
+    public Report(int reportId, String branchCode, String rangeTag, LocalDate startDate, LocalDate endDate, double sales, String remainingStock, double profit) {
         this.reportId = reportId;
         this.branchCode = branchCode;
         this.rangeTag = rangeTag;
@@ -71,12 +71,8 @@ public class Report {
         this.sales = sales;
     }
 
-    public int getRemainingStock() {
+    public String getRemainingStock() {
         return remainingStock;
-    }
-
-    public void setRemainingStock(int remainingStock) {
-        this.remainingStock = remainingStock;
     }
 
     public double getProfit() {
