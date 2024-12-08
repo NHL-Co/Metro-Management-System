@@ -177,7 +177,7 @@ public class Styling {
         comboBox.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1)); // Border styling
         comboBox.setPreferredSize(new Dimension(200, 30)); // Size
     }
-    public static JButton footer(JFrame frame) {
+    public static JPanel footer(JFrame frame) {
         JPanel footerPanel = new JPanel();
         footerPanel.setBackground(ColorPalette.BLUE);
         footerPanel.setPreferredSize(new Dimension(frame.getWidth(), 40));
