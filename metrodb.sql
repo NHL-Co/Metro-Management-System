@@ -106,7 +106,6 @@ CREATE TABLE `product` (
   `category` varchar(100) DEFAULT NULL,
   `original_price` double DEFAULT NULL,
   `sale_price` double DEFAULT NULL,
-  `price_by_unit` double DEFAULT NULL,
   `price_by_carton` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
