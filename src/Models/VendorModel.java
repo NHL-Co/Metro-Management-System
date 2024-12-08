@@ -51,8 +51,6 @@ public class VendorModel {
     }
 
 
-
-
     public boolean deleteVendor(int vendorId) {
         String query = "DELETE FROM vendor WHERE vendor_id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -64,7 +62,6 @@ public class VendorModel {
         }
         return false;
     }
-
     public boolean updateVendor(Vendor vendor) {
         // First, check if the CNIC already exists in the database for another vendor
         String checkQuery = "SELECT COUNT(*) FROM vendor WHERE cnic = ? AND vendor_id != ?";
@@ -96,6 +93,7 @@ public class VendorModel {
         }
         return false;
     }
+
 
 
     public Vendor getVendor(int vendorId) {
