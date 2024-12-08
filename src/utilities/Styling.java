@@ -8,7 +8,7 @@ import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class Styling {
-    public static Font bodyFont = new Font("Bell MT", Font.PLAIN, 14);
+    public static Font bodyFont = new Font("Bell MT", Font.PLAIN, 16);
     public static Font headingFont = new Font("Franklin Gothic Book", Font.PLAIN, 18);
     public static Font mainHeadingFont = new Font("Franklin Gothic Book", Font.PLAIN, 26);
 
