@@ -175,7 +175,13 @@ public class ViewEmployeesView extends JFrame {
     }
 
     public void loadEmployees() {
-        List<Employee> employees = empModel.getEmployeesByType(String.valueOf(empType));
+        List<Employee> employees;
+        if(emp == null){
+            employees = empModel.getEmployeesByType(String.valueOf(empType));
+        }
+        else{
+            employees = empModel.getBranchEmployees(String.valueOf(empType), emp.getBranchCode());
+        }
         for (Employee emp : employees) {
             Object[] row = {emp.getEmpNo(), emp.getName(), emp.getEmail(), emp.getBranchCode(), emp.getSalary(), "Delete"};
             tableModel.addRow(row);
