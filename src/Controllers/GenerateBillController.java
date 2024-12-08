@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controllers;
 
 import Models.BillModel;
@@ -10,8 +5,10 @@ import Models.ProductBranchModel;
 import Models.ProductModel;
 import Views.GenerateBillView;
 import java.time.LocalDate;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,10 +19,6 @@ import utilities.GlobalValues;
 import utilities.MessageDialog;
 import utilities.Product;
 
-/**
- *
- * @author laiba
- */
 public class GenerateBillController {
     private Bill bill; 
     private ProductModel prodModel;
@@ -45,7 +38,7 @@ public class GenerateBillController {
         this.prodModel = prodModel;
         this.emp = emp;
         this.mainView = mainView;
-        products = (ArrayList<Product>) prodModel.getAllProducts();
+        products = prodModel.getProducts();
         filterProducts();
         view = new GenerateBillView(products, emp.getName());
         addProductToBill();
@@ -56,16 +49,15 @@ public class GenerateBillController {
     public void filterProducts()
     {
         pbmodel = new ProductBranchModel();
-        for(Product p : products)
-        {
-            if((pbmodel.getProductBranchQty(p.getProductId(), emp.getBranchCode())) == 0)
-            {
-                products.remove(p);
+        Iterator<Product> iterator = products.iterator();
+        while (iterator.hasNext()) {
+            Product p = iterator.next();
+            if (pbmodel.getProductBranchQty(p.getProductId(), emp.getBranchCode()) == 0) {
+                iterator.remove();
             }
         }
     }
     
-     // Set "Add" button listeners
     public void addProductToBill()
     {
         HashMap<Product, JButton> productCards = view.getProductCards();
