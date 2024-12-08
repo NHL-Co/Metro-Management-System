@@ -45,9 +45,10 @@ public class ChangePasswordView extends JFrame {
     private JButton btnBack;
     
     private boolean firstTime;
+    private String empName;
     
-    public ChangePasswordView(boolean firstTime){
-        
+    public ChangePasswordView(boolean firstTime, String empName){
+        this.empName = empName;
         this.firstTime = firstTime;
         setTitle("Change Password");
         ImageIcon icon = new ImageIcon("src/Images/MetroLogo.png");
@@ -66,7 +67,7 @@ public class ChangePasswordView extends JFrame {
     {
         setLayout(new BorderLayout());
         dashboardPanel = new JPanel();
-        Styling.setDashboard(dashboardPanel, d);
+        Styling.setDashboard(this, dashboardPanel, d, "Change Password", empName);
         
         centerPanel = new JPanel(new GridLayout(0,1));
         tfEmail = new JTextField();

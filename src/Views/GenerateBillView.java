@@ -11,6 +11,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -27,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import utilities.ColorPalette;
+import utilities.Employee;
 import utilities.Product;
 import utilities.Styling;
 
@@ -41,14 +44,18 @@ public class GenerateBillView extends JFrame {
     private JPanel leftPane, rightPane;
     private JPanel productsPanel; // in left pane
     private JPanel billItems; // in right pane :
-    private JButton confirmBtn;
+    private JButton confirmBtn, backBtn;
     private JCheckBox cashCheckBox;
+    private String empName;
     
-    private HashMap<Product, JPanel> productCards; // track product cards
+    private HashMap<Product, JButton> productCards; // track product card buttons
     private HashMap<String, Integer> inBill;
     
-    public GenerateBillView(ArrayList<Product> products)
+    private GridBagConstraints gbc;
+    
+    public GenerateBillView(ArrayList<Product> products, String empName)
     {
+        this.empName = empName;
         productCards = new HashMap<>();
         inBill = new HashMap<>();
         
@@ -71,10 +78,10 @@ public class GenerateBillView extends JFrame {
     {
         setLayout(new BorderLayout());
         dashboardPanel = new JPanel();
-        Styling.setDashboard(this, dashboardPanel, d, "Generate Bill");
         
         centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(Color.WHITE);
+        Styling.setDashboard(this, dashboardPanel, d, "Generate Bill", empName);
         
         // left panel
         makeLeftPanel();
@@ -130,25 +137,31 @@ public class GenerateBillView extends JFrame {
         //-----------bottom of the bill sidebar
         JPanel bottomBill = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         bottomBill.setBackground(Color.WHITE);
+        backBtn = new JButton("Back");
         confirmBtn = new JButton("Confirm Bill");
         Styling.setButton(confirmBtn);
+        Styling.setButton(backBtn);
         cashCheckBox = new JCheckBox("Cash");
-        cashCheckBox.setFont(Styling.bodyFont);        
+        cashCheckBox.setBackground(Color.WHITE);
+        cashCheckBox.setFont(Styling.headingFont);        
         cashCheckBox.setFont(cashCheckBox.getFont().deriveFont(16));        
+        bottomBill.add(backBtn);
         bottomBill.add(cashCheckBox);
         bottomBill.add(confirmBtn);
         
         //----------------middle of the bill sidebar: bill items
         billItems = new JPanel();
         billItems.setBackground(Color.WHITE);
-        billItems.setLayout(new BoxLayout(billItems, BoxLayout.Y_AXIS));
+        billItems.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        addRow(billItems, gbc, "Item", "Qty", "Price", true);
+        
         JScrollPane billScroll = new JScrollPane(billItems);
         billScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); 
         billScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         Styling.styleScrollBar(billScroll);
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = (int)(screenSize.width * 0.50);
-        billItems.setPreferredSize(new Dimension(width, 1000));
         
         rightPane.add(billLbl, BorderLayout.NORTH);
         rightPane.add(billScroll, BorderLayout.CENTER);
@@ -195,81 +208,48 @@ public class GenerateBillView extends JFrame {
         nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
 
         // Product Prices
-        JLabel priceLbl = new JLabel(String.format("Unit: Rs.%.1f", product.getSalePrice()));
-        JLabel priceLblCarton = new JLabel(String.format("Carton: Rs.%.1f", product.getPriceByCarton()));
+        JLabel priceLbl = new JLabel(String.format("Rs.%.1f", product.getSalePrice()));
         
         Styling.setLabelBody(priceLbl);
-        Styling.setLabelBody(priceLblCarton);
         priceLbl.setHorizontalAlignment(JLabel.CENTER);
-        priceLblCarton.setHorizontalAlignment(JLabel.CENTER);
 
         // Add labels to the info panel
         infoPanel.add(idLabel);
         infoPanel.add(nameLabel);
         infoPanel.add(priceLbl);
-        infoPanel.add(priceLblCarton);
         
         // Add buttons to button panel
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 1));
         JButton addUnit = new JButton("Add");
-        JButton addCarton = new JButton("Add Carton");
         btnPanel.setBackground(Color.WHITE);
         Styling.setButton(addUnit);
-        Styling.setButton(addCarton);
         btnPanel.add(addUnit); // [0]
-        btnPanel.add(addCarton); // [1]
 
         // Add components to the card
         card.add(imageLabel, BorderLayout.NORTH);
         card.add(infoPanel, BorderLayout.CENTER);
         card.add(btnPanel, BorderLayout.SOUTH);
         
-        productCards.put(product, btnPanel);
+        productCards.put(product, addUnit);
         return card;
     }
     
     public void addProductToBill(Product p, int qty)
     {
-        if (inBill.containsKey(p.getName())) {
+        if (inBill.containsKey(p.getName())) 
+        {
             inBill.put(p.getName(), qty);
-
             updateProductLabel(p.getName(), qty, p.getSalePrice());
-        } else {
+        } else 
+        {
             inBill.put(p.getName(), qty);
-
-            JLabel billProdLbl = new JLabel(String.format("%s........(%d) %.1f", p.getName(), qty, p.getSalePrice()));
-            Styling.setLabelBody(billProdLbl);
-            billProdLbl.setFont(billProdLbl.getFont().deriveFont(14));
-            billProdLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-            billItems.add(billProdLbl);
+            String price = String.format("%.2f", p.getSalePrice() * qty);
+            addRow(billItems, gbc, p.getName(), Integer.toString(qty), price, false);
+            
         }
         billItems.revalidate();
         billItems.repaint();
-    }
-    
-    public void addProductCartonToBill(Product p, int qty)
-    {
-        if (inBill.containsKey(p.getName()) && inBill.containsKey(" - carton")) {
-            inBill.put(p.getName(), qty);
-
-            updateProductLabel(p.getName() + " - carton", qty, p.getSalePrice());
-        } else {
-            inBill.put(p.getName(), qty);
-
-            JLabel billProdLbl = new JLabel(String.format("%s........(%d) %.1f", p.getName() + " - carton", qty, p.getSalePrice()));
-            billProdLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-            Styling.setLabelBody(billProdLbl);
-            billProdLbl.setFont(billProdLbl.getFont().deriveFont(14));
-            billItems.add(billProdLbl);
-           
-        }
-        billItems.revalidate();
-        billItems.repaint();
-    }
-
-    public HashMap<Product, JPanel> getProductCards() {
-        return productCards;
     }
     
     private void updateProductLabel(String productName, int qty, double price) {
@@ -277,11 +257,64 @@ public class GenerateBillView extends JFrame {
             if (component instanceof JLabel) {
                 JLabel label = (JLabel) component;
                 if (label.getText().contains(productName)) {
-                    label.setText(String.format("%s........(%d) %.1f", productName, qty, price));
+                    String priceS = String.format("%.2f", price*qty);
+                    updateRow(billItems, productName, Integer.toString(qty), priceS);
                     break;
                 }
             }
         }
+    }
+    
+    private static void addRow(JPanel panel, GridBagConstraints gbc, String left, String quantity, String right, boolean title) {
+        // Left label (left-aligned)
+        gbc.gridx = 0; // Column 0
+        gbc.anchor = GridBagConstraints.WEST; 
+        JLabel leftLbl = new JLabel(left);
+        leftLbl.setName("leftLabel_" + left);
+        Styling.styleBillItems(leftLbl, Color.BLACK);
+        panel.add(leftLbl, gbc);
+
+        // Quantity (center-aligned)
+        gbc.gridx = 1; // Column 1
+        gbc.anchor = GridBagConstraints.CENTER;
+        JLabel centerLbl = new JLabel(quantity);
+        centerLbl.setName("centerLabel_" + left);
+        Styling.styleBillItems(centerLbl, Color.BLACK);
+        panel.add(centerLbl, gbc);
+
+        // Right label (right-aligned)
+        gbc.gridx = 2; // Column 2
+        gbc.anchor = GridBagConstraints.EAST; 
+        JLabel rightLbl = new JLabel(right);
+        rightLbl.setName("rightLabel_" + left);
+        Styling.styleBillItems(rightLbl, Color.BLACK);
+        panel.add(rightLbl, gbc);
+        
+        if(title)
+        {
+            leftLbl.setFont(leftLbl.getFont().deriveFont(Font.BOLD));
+            rightLbl.setFont(rightLbl.getFont().deriveFont(Font.BOLD));
+            centerLbl.setFont(centerLbl.getFont().deriveFont(Font.BOLD));
+        }
+        
+        gbc.gridy++;
+    }
+    
+    private void updateRow(JPanel panel, String left, String quantity, String right) {
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JLabel) {
+                JLabel label = (JLabel) component;
+                if (label.getName() != null) {
+                    if (label.getName().equals("leftLabel_" + left)) {
+                        label.setText(left); 
+                    } else if (label.getName().equals("centerLabel_" + left)) {
+                        label.setText(quantity);
+                    } else if (label.getName().equals("rightLabel_" + left)) {
+                        label.setText(right);
+                    }
+                }
+            }
+    }
     }
     
     public void clearBill()
@@ -296,9 +329,18 @@ public class GenerateBillView extends JFrame {
     {
         confirmBtn.addActionListener(al);
     }
-
+    
+    public void setBackBtnActionListener(ActionListener al)
+    {
+        backBtn.addActionListener(al);
+    }
+    
     public JCheckBox getCashCheckBox() {
         return cashCheckBox;
+    }
+
+    public HashMap<Product, JButton> getProductCards() {
+        return productCards;
     }
     
     

@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import utilities.ColorPalette;
+import utilities.Employee;
 import utilities.RoundedButton;
 import utilities.Styling;
 
@@ -30,8 +31,10 @@ public class CashierDashboardView extends JFrame {
     private JPanel centerPanel;
     private JButton btnChangePwd;
     private JButton btngenBill;
+    private String empName;
     
-    public CashierDashboardView(){
+    public CashierDashboardView(String empName){
+        this.empName = empName;
         setTitle("Cashier Dashboard");
         ImageIcon icon = new ImageIcon("src/Images/MetroLogo.png");
         setIconImage(icon.getImage());
@@ -49,11 +52,11 @@ public class CashierDashboardView extends JFrame {
     {
         setLayout(new BorderLayout());
         dashboardPanel = new JPanel();
-        Styling.setDashboard(this, dashboardPanel, d, "Cashier Dashboard");
         
         centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
         btnChangePwd = setButtons(centerPanel, "Change Password", "src/Images/change_pwd_small.png", 100, 80);
         btngenBill = setButtons(centerPanel, "Generate Bill", "src/Images/add_bill_small.png", 100, 80);
+        Styling.setDashboard(this, dashboardPanel, d, "Cashier Dashboard", empName);
         
         add(dashboardPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
