@@ -77,6 +77,7 @@ public class DEODashboardController {
             if (vendorModel.addVendor(vendor)) {
                 MessageDialog.showSuccess("Vendor added successfully!");
                 view.getVendorComboBox().addItem(name);
+                 view.loadVendorData();
 
                 // Update vendor combo box
             } else {
