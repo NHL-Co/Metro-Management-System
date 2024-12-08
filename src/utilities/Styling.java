@@ -5,6 +5,7 @@ import Controllers.LogInOptionsController;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 public class Styling {
     public static Font bodyFont = new Font("Bell MT", Font.PLAIN, 14);
@@ -187,6 +188,32 @@ public class Styling {
         footerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         footerPanel.add(footerLabel, BorderLayout.CENTER);
         frame.add(footerPanel, BorderLayout.SOUTH);
+    }
+
+    public static void styleScrollBar(JScrollPane scrollPane) {
+        scrollPane.setBackground(Color.WHITE);
+    
+        // Set the background of the viewport to white
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+        verticalScrollBar.setBackground(Color.WHITE); // Background of the scrollbar
+        verticalScrollBar.setUnitIncrement(16);
+    
+        scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = ColorPalette.YELLOW; // Thumb color
+                this.trackColor = ColorPalette.BLUE;  // Track color
+            }
+        });
+
+    }
+    
+    public static void styleBillItems(JLabel lbl, Color color)
+    {
+        lbl.setFont(new Font("Arial", headingFont.getStyle(), 14));
+        lbl.setForeground(color);
+        
     }
 }
 
