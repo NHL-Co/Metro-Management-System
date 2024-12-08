@@ -25,6 +25,33 @@ public class ProductModel {
         }
     }
 
+    public List<Product> getAllProducts() {
+        List<Product> productList = new ArrayList<>();
+        String query = "SELECT * FROM product";
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            // Process each record and create Product objects
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("product_id"),
+                        rs.getInt("vendor_id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("original_price"),
+                        rs.getDouble("sale_price"),
+                        rs.getDouble("price_by_carton")
+                );
+                productList.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+    }
+
+
     public boolean addProduct(Product product) {
         String query = "INSERT INTO product (vendor_id, name, category, original_price, sale_price, price_by_carton) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -112,25 +139,6 @@ public class ProductModel {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public ArrayList<Product> getProducts()
-    {
-        ArrayList<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM product";
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            ResultSet rs = pstmt.executeQuery();
-            while(rs.next())
-            {
-                Product product = new Product(rs.getInt("product_id"), rs.getInt("vendor_id"), 
-                        rs.getString("name"),rs.getString("category"), rs.getDouble("original_price"), 
-                        rs.getDouble("sale_price"), rs.getDouble("price_by_carton"));
-                products.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return products;
     }
 }
 
