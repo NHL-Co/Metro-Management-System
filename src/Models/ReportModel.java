@@ -34,7 +34,7 @@ public class ReportModel {
             stmt.setString(3, report.getStartDate().toString());
             stmt.setString(4, report.getEndDate().toString());
             stmt.setDouble(5, report.getSales());
-            stmt.setInt(6, report.getRemainingStock());
+            stmt.setString(6, report.getRemainingStock());
             stmt.setDouble(7, report.getProfit());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -63,7 +63,7 @@ public class ReportModel {
             stmt.setString(3, report.getStartDate().toString());
             stmt.setString(4, report.getEndDate().toString());
             stmt.setDouble(5, report.getSales());
-            stmt.setInt(6, report.getRemainingStock());
+            stmt.setString(6, report.getRemainingStock());
             stmt.setDouble(7, report.getProfit());
             stmt.setInt(8, report.getReportId());
             return stmt.executeUpdate() > 0;
@@ -86,7 +86,7 @@ public class ReportModel {
                         rs.getDate("startDate").toLocalDate(),
                         rs.getDate("endDate").toLocalDate(),
                         rs.getDouble("sales"),
-                        rs.getInt("remainingStock"),
+                        rs.getString("remainingStock"),
                         rs.getDouble("profit")
                 );
             }
@@ -95,4 +95,4 @@ public class ReportModel {
         }
         return null;
     }
-} 
+}
