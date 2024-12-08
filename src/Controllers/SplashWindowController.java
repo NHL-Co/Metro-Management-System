@@ -5,6 +5,8 @@
  */
 package Controllers;
 
+import Views.SplashWindowView;
+
 import java.io.BufferedInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,15 +17,16 @@ import java.net.URL;
  */
 public class SplashWindowController {
 
-    // SplashWindow splashWindowView
+     SplashWindowView splashWindowView;
     
     public SplashWindowController() 
     {
-        // splashWindowView = new SplashWindow(getInternetSpeed());
+         splashWindowView = new SplashWindowView(getInternetSpeed());
     }
     
-    public void getInternetSpeed()
+    public double getInternetSpeed()
     {
+        double speedMbps;
         String fileUrl = "https://link.testfile.org/PDF10MB";
         int fileSizeInBytes = 10 * 1024 * 1024; // 10 MB in bytes
 
@@ -38,7 +41,7 @@ public class SplashWindowController {
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 System.out.println("Unable to connect to the server.");
-                return;
+                return 0;
             }
 
             // read file (simulate)
@@ -52,12 +55,14 @@ public class SplashWindowController {
 
             // calculate
             double timeTakenInSeconds = (endTime - startTime) / 1000.0;
-            double speedMbps = (fileSizeInBytes / (1024.0 * 1024.0)) / timeTakenInSeconds * 8; // covert to Mbps
+            speedMbps = (fileSizeInBytes / (1024.0 * 1024.0)) / timeTakenInSeconds * 8; // covert to Mbps
 
             System.out.printf("Download Speed: %.2f Mbps%n", speedMbps);
+            return speedMbps;
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
+        return 0;
     }
     
     
