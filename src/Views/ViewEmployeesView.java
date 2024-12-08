@@ -129,7 +129,7 @@ public class ViewEmployeesView extends JFrame {
         employeeTable.setBackground(Color.WHITE);
         employeeTable.setFont(Styling.bodyFont);
         employeeTable.setRowHeight(30);
-        employeeTable.getTableHeader().setFont(Styling.headingFont);
+        employeeTable.getTableHeader().setFont(Styling.bodyFont);
         employeeTable.getTableHeader().setBackground(ColorPalette.BLUE);
         employeeTable.getTableHeader().setForeground(Color.WHITE);
         employeeTable.setGridColor(ColorPalette.LIGHT_GREY);
