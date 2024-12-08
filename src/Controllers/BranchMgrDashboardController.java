@@ -1,6 +1,7 @@
 package Controllers;
 
 import Models.EmployeeModel;
+import Models.ReportModel;
 import Views.BranchMgrView;
 import Views.ViewEmployeesView;
 import utilities.Employee;
@@ -10,12 +11,14 @@ import utilities.MessageDialog;
 public class BranchMgrDashboardController {
     private Employee branchMgr;
     private EmployeeModel empModel;
+    private ReportModel reportModel;
     private BranchMgrView view;
 
-    public BranchMgrDashboardController(Employee branchMgr, EmployeeModel empModel) {
+    public BranchMgrDashboardController(Employee branchMgr, EmployeeModel empModel, ReportModel reportModel) {
         this.branchMgr = branchMgr;
         this.empModel = empModel;
         this.view = new BranchMgrView(branchMgr);
+        this.reportModel = reportModel;
         if(branchMgr.getPassword().equals("123456"))
         {
             new ChangePasswordController(view, branchMgr, empModel, true);
@@ -25,22 +28,22 @@ public class BranchMgrDashboardController {
 
     public void addListeners(){
         view.getAddCashier().addActionListener(e -> {
-            new AddEmployeeController(branchMgr, empModel, 'C');
+            new AddEmployeeController(branchMgr, empModel,reportModel, 'C');
             view.dispose();
         });
 
         view.getAddDeo().addActionListener(e -> {
-            new AddEmployeeController(branchMgr, empModel, 'D');
+            new AddEmployeeController(branchMgr, empModel, reportModel,'D');
             view.dispose();
         });
 
         view.getViewCashier().addActionListener(e -> {
-            new ViewEmployeesView(branchMgr, empModel, 'C');
+            new ViewEmployeesView(branchMgr, empModel, reportModel,'C');
             view.dispose();
         });
 
         view.getViewDeo().addActionListener(e -> {
-            new ViewEmployeesView(branchMgr, empModel, 'D');
+            new ViewEmployeesView(branchMgr, empModel,reportModel, 'D');
             view.dispose();
         });
 

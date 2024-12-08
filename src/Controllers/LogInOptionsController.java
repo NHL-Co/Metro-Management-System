@@ -1,6 +1,8 @@
+
 package Controllers;
 
 import Models.EmployeeModel;
+import Models.ReportModel;
 import Models.SuperAdmin;
 
 import Views.LogInOptionsView;
@@ -8,16 +10,18 @@ import utilities.Employee;
 import utilities.MessageDialog;
 
 public class LogInOptionsController {
-    
+
     private static LogInOptionsView logInOptionsView;
     private static SuperAdmin spaModel;
     private static EmployeeModel empModel;
-    
+    private static ReportModel reportModel;
+
     public LogInOptionsController() {
         logInOptionsView = new LogInOptionsView();
         spaModel = new SuperAdmin();
         spaModel.seedAdmin("admin-user", "245362");
         empModel = new EmployeeModel();
+        reportModel = new ReportModel();
 
         //Set action listener
         logInOptionsView.getLoginButton().addActionListener(e -> {
@@ -39,7 +43,7 @@ public class LogInOptionsController {
         });
 
     }
-    
+
     public static void superAdminLogin() {
         String usernameInput = logInOptionsView.getUsername();
         String pwdInput = logInOptionsView.getPassword();
@@ -48,13 +52,13 @@ public class LogInOptionsController {
         if(spaModel.adminLogin(usernameInput, pwdInput)) {
             MessageDialog.showSuccess("Successfully Logged In!");
             logInOptionsView.dispose();
-            new SuperAdminDashboardController(empModel);
+            new SuperAdminDashboardController(empModel,reportModel);
         }
         else {
-             MessageDialog.showFail("Incorrect email/password!");
+            MessageDialog.showFail("Incorrect email/password!");
         }
     }
-    
+
     public static void employeeLogin() {
         String emailInput = logInOptionsView.getUsername();
         String pwdInput = logInOptionsView.getPassword();
@@ -66,7 +70,7 @@ public class LogInOptionsController {
             switch (role) {
                 case "B" -> {
                     MessageDialog.showSuccess("Successfully Logged In!");
-                    new BranchMgrDashboardController(emp, empModel);
+                    new BranchMgrDashboardController(emp, empModel,reportModel);
                     logInOptionsView.dispose();
                 }
                 case "D" -> {

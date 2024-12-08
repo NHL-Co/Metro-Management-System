@@ -2,6 +2,7 @@ package Controllers;
 
 import Models.BranchModel;
 import Models.EmployeeModel;
+import Models.ReportModel;
 import Views.AddEmployeeView;
 import utilities.Employee;
 import utilities.InputValidation;
@@ -12,6 +13,7 @@ import java.util.List;
 public class AddEmployeeController {
     private AddEmployeeView addEmployeeView;
     private EmployeeModel empModel;
+    private ReportModel reportModel;
     private char empType;
     private Employee emp;
 
@@ -21,9 +23,10 @@ public class AddEmployeeController {
      * @param empModel EmployeeModel object
      * @param empType  Employee Type ('B' for Branch Manager, 'C' for Cashier, 'D' for Data Entry Operator)
      */
-    public AddEmployeeController(Employee emp, EmployeeModel empModel, char empType) {
+    public AddEmployeeController(Employee emp, EmployeeModel empModel, ReportModel reportModel, char empType) {
         this.emp = emp;
         this.empModel = empModel;
+        this.reportModel = reportModel;
         this.empType = empType;
 
         List<String> branches = empType == 'B' ? BranchModel.getBranchesWithoutManager() : BranchModel.getBranchCodes();
@@ -39,10 +42,10 @@ public class AddEmployeeController {
         });
         addEmployeeView.getCancelButton().addActionListener(e -> {
             if (emp == null) {
-                new SuperAdminDashboardController(empModel);
+                new SuperAdminDashboardController(empModel,reportModel);
                 addEmployeeView.dispose();
             } else {
-                new BranchMgrDashboardController(emp, empModel);
+                new BranchMgrDashboardController(emp, empModel,reportModel);
                 addEmployeeView.dispose();
             }
         });
@@ -63,11 +66,13 @@ public class AddEmployeeController {
                 if (empModel.addEmployee(newEmployee)) {
                     MessageDialog.showSuccess(getSuccessMessage());
                     if(emp == null){
-                        new SuperAdminDashboardController(empModel);
+                        BranchModel.incrementEmployees(branchCode);
+                        new SuperAdminDashboardController(empModel,reportModel);
                         addEmployeeView.dispose();
                     }
                     else{
-                        new BranchMgrDashboardController(emp, empModel);
+                        BranchModel.incrementEmployees(branchCode);
+                        new BranchMgrDashboardController(emp, empModel,reportModel);
                         addEmployeeView.dispose();
                     }
                 } else {
@@ -90,13 +95,10 @@ public class AddEmployeeController {
     }
 
     private String getSuccessMessage() {
-        switch (empType) {
-            case 'C':
-                return "Cashier created successfully!";
-            case 'D':
-                return "Data Entry Operator created successfully!";
-            default:
-                return "Branch Manager created successfully!";
-        }
+        return switch (empType) {
+            case 'C' -> "Cashier created successfully!";
+            case 'D' -> "Data Entry Operator created successfully!";
+            default -> "Branch Manager created successfully!";
+        };
     }
 }
