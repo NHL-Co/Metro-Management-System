@@ -12,22 +12,20 @@ import utilities.Vendor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class DEODashboardController {
-    private VendorModel vendorModel;
-    private ProductModel prodModel;
-    private EmployeeModel empModel;
-    private Employee deo;
-    private DEODashboardView view;
+    private final VendorModel vendorModel;
+    private final ProductModel prodModel;
+    private final DEODashboardView view;
 
     public DEODashboardController(Employee deo, EmployeeModel empModel) {
-        this.deo = deo;
-        this.empModel = empModel;
         this.prodModel = new ProductModel();
         this.vendorModel = new VendorModel();
-        this.view = new DEODashboardView();
+        this.view = new DEODashboardView(vendorModel);
+        if(deo.getPassword().equals("123456")){
+            new ChangePasswordController(view,deo,empModel,true);
+            view.setVisible(false);
+        }
 
         initializeListeners();
         populateVendorComboBox();
@@ -44,20 +42,10 @@ public class DEODashboardController {
         });
 
         // Add vendor button listener
-        view.getAddVendorButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addVendor();
-            }
-        });
+        view.getAddVendorButton().addActionListener(e -> addVendor());
 
         // Save product button listener
-        view.getSaveProductButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addProduct();
-            }
-        });
+        view.getSaveProductButton().addActionListener(e -> addProduct());
     }
 
     private void showVendorPanel() {
@@ -72,7 +60,7 @@ public class DEODashboardController {
 
     private void populateVendorComboBox() {
         // Fetch vendor names from the model and populate the combo box
-        String[] vendorNames = vendorModel.getVendorNames();
+        String[] vendorNames = VendorModel.getVendorNames();
         JComboBox<String> vendorComboBox = view.getVendorComboBox();
         for (String vendorName : vendorNames) {
             vendorComboBox.addItem(vendorName);
@@ -88,7 +76,9 @@ public class DEODashboardController {
             Vendor vendor = new Vendor(0, name, cnic, phoneNumber);
             if (vendorModel.addVendor(vendor)) {
                 MessageDialog.showSuccess("Vendor added successfully!");
-                view.getVendorComboBox().addItem(name); // Update vendor combo box
+                view.getVendorComboBox().addItem(name);
+
+                // Update vendor combo box
             } else {
                 MessageDialog.showFail("Could not add vendor!");
             }
@@ -103,10 +93,9 @@ public class DEODashboardController {
             String productCategory = view.getProductCategoryField();
             Product product = getProduct(productName, productCategory);
 
-            String selectedVendorName = (String) view.getVendorComboBox().getSelectedItem(); // Get selected vendor name from the combo box
-
-            if (prodModel.addProduct(product, selectedVendorName)) { // Pass the selected vendor name
+            if (prodModel.addProduct(product)) { // Pass the selected vendor name
                 MessageDialog.showSuccess("Product added successfully!");
+                view.loadProductData();
             } else {
                 MessageDialog.showFail("Could not add product!");
             }
@@ -118,15 +107,14 @@ public class DEODashboardController {
     private Product getProduct(String productName, String productCategory) {
         double originalPrice = Double.parseDouble(view.getProductOriginalPriceField().getText());
         double salePrice = Double.parseDouble(view.getProductSalePriceField().getText());
-        double unitPrice = Double.parseDouble(view.getProductUnitPriceField().getText());
         double cartonPrice = Double.parseDouble(view.getProductCartonPriceField().getText());
 
         // Get selected vendor ID based on combo box selection
-        int vendorId = view.getVendorComboBox().getSelectedIndex() + 1;
+        int vendorId = vendorModel.getVendorIdByName((String) view.getVendorComboBox().getSelectedItem());
         System.out.println(vendorId);
 
         Product product = new Product(0, vendorId, productName, productCategory,
-                originalPrice, salePrice, unitPrice, cartonPrice);
+                originalPrice, salePrice, cartonPrice);
         return product;
     }
 }

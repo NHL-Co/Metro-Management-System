@@ -3,20 +3,22 @@ package Controllers;
 import Models.EmployeeModel;
 import Models.SuperAdmin;
 
+import Views.DEODashboardView;
 import Views.LogInOptionsView;
 import utilities.Employee;
 import utilities.MessageDialog;
 
 public class LogInOptionsController {
-    
-    private static LogInOptionsView logInOptionsView = new LogInOptionsView();
+
+    private static LogInOptionsView logInOptionsView;
     private static SuperAdmin spaModel;
     private static EmployeeModel empModel;
-    
+
     public LogInOptionsController() {
         spaModel = new SuperAdmin();
         spaModel.seedAdmin("admin-user", "245362");
         empModel = new EmployeeModel();
+        logInOptionsView  = new LogInOptionsView();
 
         //Set action listener
         logInOptionsView.getLoginButton().addActionListener(e -> {
@@ -32,7 +34,7 @@ public class LogInOptionsController {
         });
 
     }
-    
+
     public static void superAdminLogin() {
         String usernameInput = logInOptionsView.getUsername();
         String pwdInput = logInOptionsView.getPassword();
@@ -44,10 +46,10 @@ public class LogInOptionsController {
             new SuperAdminDashboardController(empModel);
         }
         else {
-             MessageDialog.showFail("Incorrect email/password!");
+            MessageDialog.showFail("Incorrect email/password!");
         }
     }
-    
+
     public static void employeeLogin() {
         String emailInput = logInOptionsView.getUsername();
         String pwdInput = logInOptionsView.getPassword();
@@ -76,7 +78,7 @@ public class LogInOptionsController {
         }
         else
         {
-            MessageDialog.showFail("No user found. Please enter correct credentials.");
+            MessageDialog.showFail("Incorrect email/password!");
         }
     }
 }
