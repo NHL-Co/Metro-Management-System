@@ -1,5 +1,8 @@
 package Models;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import utilities.*;
 
 public class ReportModel {
@@ -94,5 +97,28 @@ public class ReportModel {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Report> getAllReports() {
+        List<Report> reports = new ArrayList<>();
+        String query = "SELECT * FROM report";
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                reports.add(new Report(
+                        rs.getInt("reportid"),
+                        rs.getString("branchCode"),
+                        rs.getString("rangeTag"),
+                        rs.getDate("startDate").toLocalDate(),
+                        rs.getDate("endDate").toLocalDate(),
+                        rs.getDouble("sales"),
+                        rs.getString("remainingStock"),
+                        rs.getDouble("profit")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reports;
     }
 }
